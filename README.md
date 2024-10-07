@@ -4,7 +4,7 @@
 ## Crear Curso
 ## POST:localhost:5000/create_course
 
-```json
+```javascript
 // request
 {
     "name":"Nombre Curso",
@@ -34,7 +34,7 @@
 ## Obtener Curso
 ## POST:localhost:5000/get_course
 
-```json
+```javascript
 // request
 {
     "id_course":1
@@ -59,7 +59,7 @@
 ## Obtener todos los curso de usuario
 ## POST:localhost:5000/get_all_course_user
 
-```json
+```javascript
 // request
 {
     "id_user":1
@@ -92,7 +92,7 @@
 ## Modificar Curso
 ## POST:localhost:5000/update_course
 
-```json
+```javascript
 // request
 {
     "name":"nuevo nombre Curso",
@@ -120,7 +120,7 @@
 ## Eliminar Curso
 ## POST:localhost:5000/delete_course
 
-```json
+```javascript
 // request
 {
     "id_course":1
