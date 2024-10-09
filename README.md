@@ -137,3 +137,111 @@
     "error":"Error al eliminar el curso"
 }
 ```
+
+
+
+# Recordatorios - Reminders
+## Crear Recordatorio
+## POST:localhost:5000/create_reminder
+
+```javascript
+// request
+{
+    "name":"nombre del recordatorio",
+    "description": "Descripción del recordatorio",
+    "date":"2024-10-05",
+    "hour":"10:00",
+    "id_user":1
+}
+
+// response
+//exito
+{
+   "message":"Recordatorio creado Correctamente"
+}
+
+//error
+{
+    "error":"Error al crear el recordatorio"
+}
+```
+
+## Modificar Recordatorio
+## PUT:localhost:5000/modify_reminder
+
+```javascript
+// request
+{
+    "id_reminder":1,
+    "name":"nombre del recordatorio",
+    "description": "Descripción del recordatorio",
+    "date":"2024-10-05",
+    "hour":"10:00",
+    "id_user":1
+}
+
+// response
+//exito
+{
+   "message":"Recordatorio modificado Correctamente"
+}
+
+//error
+{
+    "error":"Error al modificar el recordatorio"
+}
+```
+
+## Eliminar Recordatorio
+## DELETE:localhost:5000/delete_reminder
+
+```javascript
+// request
+{
+    "id_reminder":1
+}
+
+// response
+//exito
+{
+   "message":"Recordatorio eliminado Correctamente"
+}
+
+//error
+{
+    "error":"Error al eliminar el recordatorio"
+}
+```
+
+
+
+## Obtener Recordatorio por usuarios
+## POST:localhost:5000/get_reminders_user
+
+```javascript
+// request
+{
+    "id_user":1
+}
+
+// response
+//exito
+{
+   [
+    {
+        "id_reminder":1,
+        "name":"nombre del recordatorio",
+        "description": "Descripción del recordatorio",
+        "date":"2024-10-05",
+        "hour":"10:00",
+        "id_user":1
+    },
+    ...
+   ]
+}
+
+//error
+{
+    "error":"Error al obtener los recordatorios"
+}
+```
