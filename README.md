@@ -1,6 +1,6 @@
 # SEMI1_2S2024_PROYECTO_A_G7
 
-# CURSO
+# ***CURSO***
 ## Crear Curso
 ## POST:localhost:5000/create_course
 
@@ -137,10 +137,9 @@
     "error":"Error al eliminar el curso"
 }
 ```
+---
 
-
-
-# Recordatorios - Reminders
+# ***Recordatorios - Reminders***
 ## Crear Recordatorio
 ## POST:localhost:5000/create_reminder
 
@@ -245,3 +244,82 @@
     "error":"Error al obtener los recordatorios"
 }
 ```
+---
+
+# ***Tareas - Tasks***
+## Crear Tarea
+## POST:localhost:5000/create_task
+
+```javascript
+// request
+{
+    "id_task": 12,
+    "name":"nombre de la tarea",
+    "description": "Descripción de la tarea",
+    "date":"2024-10-05",
+    "hour":"10:00",
+    "id_course": 10
+}
+
+// response
+//exito
+{
+   "message":"Tarea creada correctamente"
+}
+
+//error
+{
+    "error":"Error al crear la tarea"
+}
+```
+
+## Modificar Task
+## PUT:localhost:5000/modify_task
+
+```javascript
+// request
+{
+    "id_task": 12,
+    "name":"nombre de la tarea",
+    "description": "Descripción de la tarea",
+    "date":"2024-10-05",
+    "hour":"10:00",
+    "id_course": 13
+}
+
+// response
+//exito
+{
+   "message":"Recordatorio modificado Correctamente"
+}
+
+//error
+{
+    "error":"Error al modificar el recordatorio"
+}
+```
+
+## Eliminar Task
+## DELETE:localhost:5000/delete_task
+
+```javascript
+// request
+{
+    "id_task": 32
+}
+
+// response
+//exito
+{
+   "message":"Tarea eliminada correctamente"
+}
+
+//error
+{
+    "error":"Error al eliminar la tarea",
+    "id_task eliminado" :32
+}
+```
+
+
+
