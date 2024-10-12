@@ -95,6 +95,7 @@
 ```javascript
 // request
 {
+    "id_course" :1 ,
     "name":"nuevo nombre Curso",
     "credits":11, //Creditos que da el curso
     "start_time":04:30:00, //hh:mm:ss

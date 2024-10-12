@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS db_semi1_proyecto;
 USE db_semi1_proyecto;
 
 CREATE TABLE `schedules`(
-    `id_schedul` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id_schedule` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `datetime_start` DATETIME NOT NULL,
     `datetime_end` DATETIME NOT NULL,
     `id_user` INT NOT NULL,
@@ -19,8 +19,7 @@ CREATE TABLE `tasks`(
 );
 CREATE TABLE `users`(
     `id_user` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(255) NOT NULL,
-    `lastname` VARCHAR(255) NOT NULL,
+    `username` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
     `role` VARCHAR(255) NOT NULL,
