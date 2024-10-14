@@ -1,0 +1,62 @@
+# Bytecode de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Directorios de entornos virtuales
+venv/
+env/
+ENV/
+.venv/
+
+# Archivos de configuración de IDE y editores
+.vscode/
+.idea/
+
+# Archivos de configuración de entornos de desarrollo
+*.env
+*.envrc
+
+# Archivos de bases de datos locales
+*.sqlite3
+
+# Archivos de logs
+*.log
+
+# Archivos de caché
+*.cache
+
+# Archivos de documentación generados
+docs/_build/
+build/
+dist/
+
+# Archivos de distribución de paquetes
+*.egg
+*.egg-info/
+*.dist-info/
+
+# Archivos de pruebas
+nosetests.xml
+coverage.xml
+*.cover
+*.hypothesis/
+*.tox/
+*.nox/
+*.coverage
+
+# Archivos de seguridad
+*.pem
+*.key
+*.crt
+
+# Archivos temporales
+*.swp
+*.swo
+*.tmp
+*.bak
+*.orig
+
+# Archivos de configuración específicos de la plataforma
+.DS_Store
+Thumbs.db
