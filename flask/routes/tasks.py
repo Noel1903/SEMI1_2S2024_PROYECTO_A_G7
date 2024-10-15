@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from models.tasks import *
 from db.db import get_db
+from  routes.uploadfile import *
 
 
 # Crear una tarea
@@ -147,6 +148,39 @@ def delete_task():
         db.commit()
         db.close()
         return jsonify({'message': 'Tarea eliminada con éxito'}), 200
+    except Exception as e:
+        db.close()
+        return jsonify({'message': str(e)}), 500
+
+
+def upload_task():
+    #se obtiene el form data
+    data = request.form
+    #se obtiene el archivo
+    file = request.files['url_file']
+    db: Session = next(get_db())
+    try:
+        #se crea un objeto de la clase UploadTask
+        upload_task = UploadTask(
+            file=upload_task_file(file),
+            state=1,
+            date=datetime.now(),
+            id_user=data['id_user'],
+            id_task=data['id_task']
+        )
+        #se agrega el objeto a la base de datos
+        db.add(upload_task)
+        db.commit()
+        response = {
+            "id_upload": upload_task.id_upload,
+            "file": upload_task.file,
+            "state": upload_task.state,
+            "date": upload_task.date,
+            "id_user": upload_task.id_user,
+            "id_task": upload_task.id_task
+        }
+        db.close()
+        return jsonify(response), 200
     except Exception as e:
         db.close()
         return jsonify({'message': str(e)}), 500

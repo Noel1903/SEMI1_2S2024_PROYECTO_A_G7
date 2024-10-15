@@ -9,13 +9,17 @@ def create_schedule():
     data = request.get_json()
     db: Session = next(get_db())
     try:
-        # Formato de fecha y hora
-        datetime_start = datetime.strptime(data['datetime_start'], '%Y-%m-%d %H:%M:%S')
-        datetime_end = datetime.strptime(data['datetime_end'], '%Y-%m-%d %H:%M:%S')
-
+        #obtener la fecha de hoy
+        now = datetime.now()
+        #convertir la fecha a string
+        now_str = now.strftime('%Y-%m-%d')
+        start_time= f"{now_str} {data['datetime_start']}:00"
+        start_time_str = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+        end_time= f"{now_str} {data['datetime_end']}:00"
+        end_time_str = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
         schedule = Schedule(
-            datetime_start=datetime_start,
-            datetime_end=datetime_end,
+            datetime_start=start_time_str,
+            datetime_end=end_time_str,
             id_user=data['id_user'],
             id_course=data['id_course']
         )

@@ -4,6 +4,7 @@ from routes.courses import *
 from routes.reminders import *
 from routes.tasks import *
 from routes.schedules import *
+from routes.notifications import *
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
@@ -33,10 +34,10 @@ app.add_url_rule('/update_course', 'update_course', update_course, methods=['PUT
 app.add_url_rule('/delete_course', 'delete_course', delete_course, methods=['DELETE'])
 
 ###########Rutas de Recordatorios
-#app.add_url_rule('/create_reminder', 'create_reminder', create_reminder, methods=['POST'])
-#app.add_url_rule('/modify_reminder', 'modify_reminder', modify_reminder, methods=['PUT'])
-#app.add_url_rule('/delete_reminder', 'delete_reminder', delete_reminder, methods=['DELETE'])
-#app.add_url_rule('/get_reminders_user', 'get_reminders_user', get_reminders_user, methods=['POST'])
+app.add_url_rule('/create_reminder', 'create_reminder', create_reminder, methods=['POST'])
+app.add_url_rule('/modify_reminder', 'modify_reminder', modify_reminder, methods=['PUT'])
+app.add_url_rule('/delete_reminder', 'delete_reminder', delete_reminder, methods=['DELETE'])
+app.add_url_rule('/get_reminders_user', 'get_reminders_user', get_reminders_user, methods=['POST'])
 
 
 
@@ -51,6 +52,9 @@ app.add_url_rule('/get_task', 'get_task', get_task, methods=['POST'])
 app.add_url_rule('/update_task', 'update_task', update_task, methods=['PUT'])
 #ELIMINAR tarea
 app.add_url_rule('/delete_task', 'delete_task', delete_task, methods=['DELETE'])
+
+#Subir una tarea
+app.add_url_rule('/upload_task', 'upload_task', upload_task, methods=['POST'])
 
 
 ############## Rutas de horarios
@@ -67,7 +71,11 @@ app.add_url_rule('/update_schedule', 'update_schedule', update_schedule, methods
 #Eliminar un horario
 app.add_url_rule('/delete_schedule', 'delete_schedule', delete_schedule, methods=['DELETE'])
 
-
+############## Rutas de notificaciones
+#obtener notificaciones por usuario
+app.add_url_rule('/get_notifications_user', 'get_notifications_user', get_notifications_user, methods=['POST'])
+#obtener todas las notificaciones
+app.add_url_rule('/get_notifications', 'get_notifications', get_notifications, methods=['GET'])
 
 
 if __name__ == '__main__':

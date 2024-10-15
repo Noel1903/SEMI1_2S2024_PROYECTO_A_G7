@@ -17,7 +17,20 @@ def upload_img_perfil(file):
     response = None
     try:
         filename = secure_filename(file.filename)
-        key = f"Fotos_Perfil/{filename}"
+        key = f"imagenes_perfil/{filename}"
+        s3_client.upload_fileobj(file, os.getenv('S3_BUCKET'),key)
+        file_url = f"https://{os.getenv('S3_BUCKET')}.s3.amazonaws.com/{key}"
+        response = file_url
+    except NoCredentialsError:
+        print('Credenciales de AWS no configuradas')
+        response = None
+    return response
+
+def upload_task_file(file):
+    response = None
+    try:
+        filename = secure_filename(file.filename)
+        key = f"documentos_tareas/{filename}"
         s3_client.upload_fileobj(file, os.getenv('S3_BUCKET'),key)
         file_url = f"https://{os.getenv('S3_BUCKET')}.s3.amazonaws.com/{key}"
         response = file_url

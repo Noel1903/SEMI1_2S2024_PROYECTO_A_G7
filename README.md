@@ -57,14 +57,9 @@
 ```
 
 ## Obtener todos los curso de usuario
-## POST:localhost:5000/get_all_course_user
+## POST:localhost:5000/get_all_courses
 
 ```javascript
-// request
-{
-    "id_user":1
-}
-
 // response
 //exito
 [
@@ -323,4 +318,84 @@
 ```
 
 
+# Notificaciones 
 
+## GET: localhost:5000/get_notification_user
+
+
+```javascript
+// request
+{
+    "id_user": 1
+}
+
+// response
+//exito
+{
+   [
+    {
+        "id_notification":1,
+        "message": "mensaje",
+        "type":"Reminder",
+        "datetime_notification":"2024-10-15",
+        "id_user": 1
+    }, . . .
+   ]
+}
+
+//error
+{
+    "error":"No  existe el id_user"
+}
+```
+
+## GET: localhost:5000/get_notifications
+
+
+```javascript
+
+// response
+//exito
+{
+   [
+    {
+        "id_notification":1,
+        "message": "mensaje",
+        "type":"Reminder",
+        "datetime_notification":"2024-10-15",
+        "id_user": 1
+    }, . . .
+   ]
+}
+
+//error
+{
+    "error":"No hay notificaciones"
+}
+```
+
+
+# Subida de tareas
+## POST: localhost:5000/upload_task
+
+
+```javascript
+
+//json
+{
+    "url_file":"formdata_file",
+    "id_user":1,
+    "id_task":1
+}
+
+// response
+//exito
+{
+   "msg":"Tarea subida correctamente"
+}
+
+//error
+{
+    "error":"No se subió la tarea"
+}
+```

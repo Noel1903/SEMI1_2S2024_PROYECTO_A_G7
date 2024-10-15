@@ -13,14 +13,25 @@ def create_course():
     data = request.get_json()
     db: Session = next(get_db())
     try:
+         #obtener la fecha de hoy
+        now = datetime.now()
+        #convertir la fecha a string
+        now_str = now.strftime('%Y-%m-%d')
+        start_time= f"{now_str} {data['start_time']}:00"
+        start_time_str = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+        end_time= f"{now_str} {data['end_time']}:00"
+        end_time_str = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
         course = Course(
             name=data['name'],
             credits=data['credits'],
-            start_time=data['start_time'],
-            end_time=data['end_time'],
+            start_time=start_time_str,
+            end_time=end_time_str,
         )
         db.add(course)
         db.commit()
+       
+
+        
         response = {
             "id_course": course.id_course,
             "name": course.name,
@@ -71,8 +82,16 @@ def update_course():
     try:
         course.name = data['name']
         course.credits = data['credits']
-        course.start_time = data['start_time']
-        course.end_time = data['end_time']
+        #obtener la fecha de hoy
+        now = datetime.now()
+        #convertir la fecha a string
+        now_str = now.strftime('%Y-%m-%d')
+        start_time= f"{now_str} {data['start_time']}:00"
+        start_time_str = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+        end_time= f"{now_str} {data['end_time']}:00"
+        end_time_str = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
+        course.start_time = start_time_str
+        course.end_time = end_time_str
         db.commit()
         response = {
             "id_course": course.id_course,
