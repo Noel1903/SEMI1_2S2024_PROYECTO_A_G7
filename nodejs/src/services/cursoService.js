@@ -1,4 +1,5 @@
-const {connection} = require('../../config/database')
+const {connection} = require('../../config/database');
+const {getDateTime,getLocalTime} = require('../models/fechaModel');
 
 /************************************************************************************
  * 
@@ -14,16 +15,17 @@ exports.crearCursoService = async function(crearCurso){
     try {
           conexion = await connection();
     } catch (error) {
-          return {status:503, data:{error:`Erro al conectar a la base de datos: ${error.message}`}};
+          return {status:503, data:{error:`Erro al conectar a la base de datos: ${error}`}};
     }
     //variables
      const {name, credits, start_time, end_time} = crearCurso;
-     
+     n_start_time = getDateTime(start_time);
+     n_end_time = getDateTime(end_time);
 
-//implementado s3
+     //implementado s3
 
      try {
-          sqlComandCreateCurso = `INSERT INTO courses (name,credits,start_time,end_time) VALUES ("${name}",${credits},"${start_time}","${end_time}");`
+          sqlComandCreateCurso = `INSERT INTO courses (name,credits,start_time,end_time) VALUES ("${name}",${credits},"${n_start_time}","${n_end_time}");`
           const [resultCreateCurso] = await conexion.query(sqlComandCreateCurso);
 
           if(resultCreateCurso.affectedRows === 0){
@@ -32,14 +34,17 @@ exports.crearCursoService = async function(crearCurso){
           
           sqlComandGetCurso = `SELECT c.id_course, c.name, c.credits, c.start_time, c.end_time FROM courses c WHERE c.id_course = ${resultCreateCurso.insertId};`
 
-          const [resultGetCurso] = await conexion.query(sqlComandGetCurso);
+          let [resultGetCurso] = await conexion.query(sqlComandGetCurso);
 
           if(resultGetCurso.length === 0){
                return {status:500, data:{error:`Error al obtener el Curso`}};
           }
+          resultGetCurso[0].start_time = getLocalTime(resultGetCurso[0].start_time);
+          resultGetCurso[0].end_time = getLocalTime(resultGetCurso[0].end_time);
+
           return {status:200,data:resultGetCurso[0]};
      } catch (error) {
-          return {status:500, data:{error:`Error al crear Curso ${error.message}`}};
+          return {status:500, data:{error:`Error al crear Curso ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
      }    
@@ -55,21 +60,24 @@ exports.obtenerCursoService = async function(obtenerCurso){
      try {
           conexion = await connection();
      } catch (error) {
-          return {status:503, data:{error:`Error al conectarse a la debe ${error.message}`}};
+          return {status:503, data:{error:`Error al conectarse a la debe ${error}`}};
      }
 
      try {
           sqlComand = `SELECT c.id_course, c.name, c.credits, c.start_time, c.end_time FROM courses c WHERE c.id_course  = ${id_course};`
-          const [resultGetCurso] = await conexion.query(sqlComand);
+          let [resultGetCurso] = await conexion.query(sqlComand);
           
           if(resultGetCurso.length === 0 ){
                return {status:404, data:{error:"Error,no se puede obtener este curso"}};
           }
-           return {status:200, data:resultGetCurso[0]};
+          
+          resultGetCurso[0].start_time = getLocalTime(resultGetCurso[0].start_time);
+          resultGetCurso[0].end_time = getLocalTime(resultGetCurso[0].end_time);
+          
+          return {status:200, data:resultGetCurso[0]};
 
      } catch (error) {
-          console.log(error);
-          return {status:500, data:{error:`Error al obtener Curso ${error.menssage}`}};
+          return {status:500, data:{error:`Error al obtener Curso ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
      } 
@@ -85,23 +93,24 @@ exports.obtenerTodoCursoUsuarioService = async function(obtenerCurso){
      try {
           conexion = await connection();
      } catch (error) {
-          return {status:503, data:{error:`Error al conectarse a la debe ${error.message}`}};
+          return {status:503, data:{error:`Error al conectarse a la debe ${error}`}};
      }
 
      try {
           sqlComand = `SELECT  c.id_course, c.name, c.credits, c.start_time, c.end_time FROM courses c 
                        INNER JOIN schedules s ON c.id_course = s.id_course
                        INNER JOIN users u ON s.id_user = u.id_user WHERE u.id_user = ${id_user} ;`
-          const [resultGetAllCurso] = await conexion.query(sqlComand);
+          let [resultGetAllCurso] = await conexion.query(sqlComand);
           
-          if(resultGetAllCurso.length === 0 ){
-               return {status:404, data:{error:"Error,usuario no posee curos"}};
+          for(let i= 0 ; i < resultGetAllCurso.length; i++){
+
+               resultGetCurso[i].start_time = getLocalTime(resultGetCurso[i].start_time);
+               resultGetCurso[i].end_time = getLocalTime(resultGetCurso[i].end_time);
           }
-           return {status:200,data:resultGetAllCurso};
+          return {status:200,data:resultGetAllCurso};
 
      } catch (error) {
-          console.log(error);
-          return {status:500, data:{error:`Error al obtener Curso ${error.menssage}`}};
+          return {status:500, data:{error:`Error al obtener Curso ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
      }
@@ -117,24 +126,35 @@ exports.modificarCursoService = async function(modificarCurso){
      try {
           conexion = await connection();
      } catch (error) {
-          return {status:503, data:{error:`Error al conectarse a la base de datos ${error.message}`}};
+          return {status:503, data:{error:`Error al conectarse a la base de datos ${error}`}};
      }
      //variables
      const {id_course,name,credits,start_time,end_time} = modificarCurso.body;
      
      try {
-          sqlComandMod = `UPDATE courses SET name = "${name}", credits = ${credits}, start_time = "${start_time}", end_time = "${end_time}" WHERE id_course = ${id_course};`;
-          const [resultModCurso,fieldsModCurso] = await conexion.query(sqlComandMod);
+          sqlComandMod = `UPDATE courses SET name = "${name}", credits = ${credits}, start_time = "${getDateTime(start_time)}", end_time = "${getDateTime(end_time)}" WHERE id_course = ${id_course};`;
+          let [resultModCurso] = await conexion.query(sqlComandMod);
           
 
           if(resultModCurso.affectedRows === 0){
                return {status:404, data:{error:`Error, no se encontro Curso a modificar`}};     
           }
 
-          return {status:200, data:{message:`Curso modificado correctamente!!!!`}};
+          sqlComandGetCurso = `SELECT c.id_course,c.name,c.credits,c.start_time, c.end_time FROM courses c WHERE c.id_course =  ${id_course};`;
+          let [resultGetCurso] = await conexion.query(sqlComandGetCurso);
+     
+          if(resultGetCurso.length === 0){
+               return {status:404, data:{error:`Error, no se encontro recordatorio a obtener`}};     
+          }
+
+          resultGetCurso[0].start_time = getLocalTime(resultGetCurso[0].start_time);
+          resultGetCurso[0].end_time = getLocalTime(resultGetCurso[0].end_time);
+
+          return {status:200, data:resultGetRecordatorio[0]};
+
 
      } catch (error) {
-          return {status:500, data:{error:`Erro al modificar Curso ${error.menssage}`}};    
+          return {status:500, data:{error:`Erro al modificar Curso ${error}`}};    
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
      }
@@ -149,7 +169,7 @@ exports.eliminarCursoService = async function(eliminarCurso){
      try {
           conexion = await connection();
      } catch (error) {
-          return {status:503, data:{error:`Error al conectarse a la base de datos ${error.message}`}};
+          return {status:503, data:{error:`Error al conectarse a la base de datos ${error}`}};
      }
 
      
@@ -166,7 +186,7 @@ exports.eliminarCursoService = async function(eliminarCurso){
           return {status:200,data:{message:'Curso eliminado exitosamente!!!'}};
 
      } catch (error) {
-          return {status:500, data:{error:`Error al eliminar Curso ${error.message}`}};
+          return {status:500, data:{error:`Error al eliminar Curso ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
      }
@@ -177,7 +197,7 @@ exports.eliminarCursoService = async function(eliminarCurso){
 
 exports.holaCursoService = function(){ 
      return new Promise(function(resolve,reject){
-          resolve("Hola Mundo!!!!!");
+          resolve("Hola Mundo desde Curso!!!!!");
          
      });
      

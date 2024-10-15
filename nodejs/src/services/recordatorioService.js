@@ -1,4 +1,5 @@
 const {connection} = require('../../config/database');
+const {getDateTime,getLocalTime,getFecha} = require('../models/fechaModel');
 
 /************************************************************************************
  * 
@@ -15,14 +16,14 @@ exports.crearRecordatorioService = async function(crearRecordatorio){
     try {
           conexion = await connection();
     } catch (error) {
-          return {status:500, data:{error:`Erro al conectar a la base de datos: ${error.message}`}};
+          return {status:500, data:{error:`Erro al conectar a la base de datos: ${error}`}};
     }
     //variables
      
      const {name,description,date,hour,id_user} = crearRecordatorio.body;
  
      try {
-          sqlComandCreateRecordatorio = `INSERT INTO reminders (name,description,date,hour,id_user) VALUES ("${name}","${description}","${date}","${hour}",${id_user});`
+          sqlComandCreateRecordatorio = `INSERT INTO reminders (name,description,date,hour,id_user) VALUES ("${name}","${description}","${date}","${getDateTime(hour)}",${id_user});`
           const [resultCreateRecordatorio] = await conexion.query(sqlComandCreateRecordatorio);
 
           //console.log(resultCreateRecordatorio);
@@ -32,14 +33,19 @@ exports.crearRecordatorioService = async function(crearRecordatorio){
           
           sqlComandGetRecordatorio = `SELECT r.id_reminder, r.name,r.description,r.date,r.hour,r.id_user FROM reminders r WHERE r.id_reminder = ${resultCreateRecordatorio.insertId};`
 
-          const [resultGetRecordatorio] = await conexion.query(sqlComandGetRecordatorio);
+          let [resultGetRecordatorio] = await conexion.query(sqlComandGetRecordatorio);
 
           if(resultGetRecordatorio.length === 0){
                return {status:500, data:{error:`Error al obtener el recordatorio`}};
           }
+
+          resultGetRecordatorio[0].date = getFecha(resultGetRecordatorio[0].date);
+          resultGetRecordatorio[0].hour = getLocalTime(resultGetRecordatorio[0].hour);
+         
           return {status:200,data:resultGetRecordatorio[0]};
+
      } catch (error) {
-          return {status:500, data:{error:`Error al crear recordatorio ${error.message}`}};
+          return {status:500, data:{error:`Error al crear recordatorio ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
      }     
@@ -55,21 +61,25 @@ exports.obtenerRecordatorioService = async function(obtenerRecordatorio){
      try {
           conexion = await connection();
      } catch (error) {
-          return {status:503, data:{error:`Error al conectarse a la debe ${error.message}`}};
+          return {status:503, data:{error:`Error al conectarse a la debe ${error}`}};
      }
 
      try {
-          sqlComand = `SELECT r.id_reminder,r.name,r.description,i.date,r.hour,r.id_user FROM image i WHERE id_image  = ${id_reminder};`
+          sqlComand = `SELECT r.id_reminder,r.name,r.description,r.date,r.hour,r.id_user FROM reminders r WHERE r.id_reminder  = ${id_reminder};`
           const [resultGetRecordatorio,fieldsGetAlbum] = await conexion.query(sqlComand);
           
           if(resultGetRecordatorio.length === 0 ){
                return {status:404, data:{error:"Error,no existe este recordatorio"}};
           }
-           return {status:200,data:resultGetRecordatorio[0]};
+
+          resultGetRecordatorio[0].date = getFecha(resultGetRecordatorio[0].date);
+          resultGetRecordatorio[0].hour = getLocalTime(resultGetRecordatorio[0].hour);
+
+          return {status:200,data:resultGetRecordatorio[0]};
 
      } catch (error) {
           
-          return {status:500, data:{error:`Error al obtener recordatorio ${error.menssage}`}};
+          return {status:500, data:{error:`Error al obtener recordatorio ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
      }
@@ -85,26 +95,24 @@ exports.obtenerTodoRecordatorioUsuarioService = async function(obtenerRecordator
      try {
           conexion = await connection();
      } catch (error) {
-          return {status:503, data:{error:`Error al conectarse a la debe ${error.message}`}};
+          return {status:503, data:{error:`Error al conectarse a la debe ${error}`}};
      }
 
      try {
           sqlComand = `SELECT  r.id_reminder,r.name,r.description,r.date,r.hour,r.id_user FROM reminders r
           INNER JOIN users u  ON r.id_user  = u.id_user WHERE u.id_user = ${id_user} ;`
           
-          const [resultGetAllRecordatorionAlbum] = await conexion.query(sqlComand);
+          let [resultGetAllRecordatorio] = await conexion.query(sqlComand);
           
-          /**
-           * Condicional que sirve para para obtener imagenes del album
-          */
-          /*if(resultGetAllRecordatorionAlbum.length === 0 ){
-               return {error:"Error,este album no posee imagen"};
-          }*/
-           return {status:200,data:resultGetAllRecordatorionAlbum};
+          for(let i= 0 ; i < resultGetAllRecordatorio.length; i++){
+
+               resultGetAllRecordatorio[i].date = getFecha(resultGetAllRecordatorio[i].date);
+               resultGetAllRecordatorio[i].hour = getLocalTime(resultGetAllRecordatorio[i].hour);
+          }
+          return {status:200,data:resultGetAllRecordatorio};
 
      } catch (error) {
-          console.log(error);
-          return {status:500, data:{error:`Error al obtener album ${error.menssage}`}};
+          return {status:500, data:{error:`Error al obtener album ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
      }
@@ -120,7 +128,7 @@ exports.modificarRecordatorioService = async function(modificarRecordatorio){
      try {
           conexion = await connection();
      } catch (error) {
-          return {status:503, data:{error:`Error al conectarse a la base de datos ${error.message}`}};
+          return {status:503, data:{error:`Error al conectarse a la base de datos ${error}`}};
      }
      //variables
      const {id_reminder,name,description,date,hour,id_user} = modificarRecordatorio.body;
@@ -141,6 +149,10 @@ exports.modificarRecordatorioService = async function(modificarRecordatorio){
                return {status:404, data:{error:`Error, no se encontro recordatorio a obtener`}};     
           }
 
+          //aqui solo retornamos las horas, min, seg le quitamos la fecha
+          resultGetRecordatorio[0].date = getFecha(resultGetRecordatorio[0].date);
+          resultGetRecordatorio[0].hour = getLocalTime(resultGetRecordatorio[0].hour);
+
           return {status:200, data:resultGetRecordatorio[0]};
 
      } catch (error) {
@@ -159,7 +171,7 @@ exports.eliminarRecordatorioService = async function(eliminarRecordatorio){
      try {
           conexion = await connection();
      } catch (error) {
-          return {status:503, data:{error:`Error al conectarse a la base de datos ${error.message}`}};
+          return {status:503, data:{error:`Error al conectarse a la base de datos ${error}`}};
      }
 
      
@@ -175,7 +187,7 @@ exports.eliminarRecordatorioService = async function(eliminarRecordatorio){
           
           return {status:200, data:{message:'Recordatorio eliminado exitosamente!!!'}};
      } catch (error) {
-          return {status:500, data:{error:`Error al eliminar imagen ${error.message}`}};
+          return {status:500, data:{error:`Error al eliminar recordatorio ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
      }     
@@ -186,7 +198,7 @@ exports.eliminarRecordatorioService = async function(eliminarRecordatorio){
 //========================================================================
 exports.holaRecordatorioService = function(){ 
      return new Promise(function(resolve,reject){
-          resolve("Hola Mundo!!!!!");
+          resolve("Hola Mundo desde Recordatorio!!!!!");
          
      });
      

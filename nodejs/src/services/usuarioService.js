@@ -35,7 +35,7 @@ exports.registrarUsuarioService = async function(registrarUsuario){
     try {
           nuevoPassword = await EncriptarPass(password);
     } catch (error) {
-          return {status:500, data:{error:`Error al encriptar password usuario en nodejs u`}}
+          return {status:500, data:{error:`Error al encriptar password usuario en nodejs u ${error}`}}
     }
     //borrar por si acaso
     
@@ -102,7 +102,7 @@ exports.modificarUsuarioService = async function(modificarUsuario){
           await s3.send(command);
 
      } catch (error) {
-          return {status:502, data:{error:"Error al subur fotos en s3!!!"}};
+          return {status:502, data:{error:`Error al subur fotos en s3 error ${error}`}};
      }
      
      let conexion; //variable de conexion a la db
@@ -145,7 +145,7 @@ exports.modificarUsuarioService = async function(modificarUsuario){
                    
      
      } catch (error) {
-          return {status:500, data:{error:"Error al modificar datos usuarios!!!"}};
+          return {status:500, data:{error:`Error al modificar datos usuarios !!! error ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
       }
@@ -157,7 +157,7 @@ exports.obtenerUsuarioService = async function(obtenerUsuario){
      try {
           conexion = await connection();
      } catch (error) {
-          return {status:503, data:{error:`Error al conectarse a la base de datos ${error.message}`}};
+          return {status:503, data:{error:`Error al conectarse a la base de datos ${error}`}};
      }
      
      
@@ -173,7 +173,7 @@ exports.obtenerUsuarioService = async function(obtenerUsuario){
           return {status:200,data:resultGetUser[0]};
 
      } catch (error) {
-          return {status:500, data:{error:`Error al obtener usuario ${error.message}`}};
+          return {status:500, data:{error:`Error al obtener usuario ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
       }
@@ -188,7 +188,7 @@ exports.eliminarUsuarioService = async function(eliminarUsuario){
      try {
           conexion = await connection();
      } catch (error) {
-          return {status:500,data:{error:`Error en la conexion en la bade de datos ${error.message}`}};
+          return {status:500,data:{error:`Error en la conexion en la bade de datos ${error}`}};
      }
      
      try {
@@ -199,6 +199,7 @@ exports.eliminarUsuarioService = async function(eliminarUsuario){
 
           const [resultDocumentUser] = conexion.query(sqlComandDocumentUser);
           
+          // ANALIZAR AQUI VER SI NO DA ERROR
           console.log(resultDocumentUser);
           console.log("id_upload:",resultDocumentUser[0].id_upload);
           console.log("file:",resultDocumentUser[0].file);
@@ -295,7 +296,7 @@ exports.eliminarUsuarioService = async function(eliminarUsuario){
 
      } catch (error) {
 
-          return {status:500, data:{error:`Error al eliminar usuario ${error.message}`}};
+          return {status:500, data:{error:`Error al eliminar usuario ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
       }
@@ -312,7 +313,7 @@ exports.loginUsuarioService = async function(loginUsuario){
      try {
           conexion = await connection();
      } catch (error) {
-          return {status:503, data:{error:`Error al conectarse a la bades de datos ${error.message}`}};
+          return {status:503, data:{error:`Error al conectarse a la bades de datos ${error}`}};
      }
 
      try {
@@ -353,7 +354,7 @@ exports.loginUsuarioService = async function(loginUsuario){
 
           
      } catch (error) {
-          return {status:500, data:{error:`error al logearse ${error.message}`}};
+          return {status:500, data:{error:`error al logearse ${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
       }
@@ -373,7 +374,7 @@ exports.loginUsuarioFaceService = async function(loginUsuarioFacial){
          listaImagenesReconocimientoFacial = await s3.send(new ListObjectsV2Command(getAllImageS3("reconocimiento")));
          
      } catch (error) {
-          return {status:500, data:{error:`Error al obtener imagenes en el bucket`}};
+          return {status:500, data:{error:`Error al obtener imagenes en el bucket error ${error}`}};
      }
      
      try {
@@ -396,7 +397,7 @@ exports.loginUsuarioFaceService = async function(loginUsuarioFacial){
                          try {
                               conexion = await connection();
                          } catch (error) {
-                              return {status:503, data:{error:`Error al conectarse a la bades de datos ${error.message}`}};
+                              return {status:503, data:{error:`Error al conectarse a la bades de datos ${error}`}};
                          }
 
                          let pathImagenUsuario = encabezadoPath + usuarioFacial.Key;
@@ -464,7 +465,7 @@ exports.crearFacialUsuarioService = async function(registrarFacialUsuario){
  
       } catch (error) {
            
-           return {status:400, data:{error:`Error al crear usuario y album,datos en incorrectos. Error Sql:${error.sqlMessage}`}};
+           return {status:400, data:{error:`Error al crear usuario y album,datos en incorrectos. Error Sql:${error}`}};
       }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
       }
