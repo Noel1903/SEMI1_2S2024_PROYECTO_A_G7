@@ -8,7 +8,7 @@ const {s3} = require('../../config/awsS3')
 const {connection} = require('../../config/database')
 
 /************************************************************************************
- * 
+ * sacado del album practica2 
  * 
  *   OPERACIONES Tarea
  * 
@@ -72,7 +72,7 @@ exports.modificarTareaService = async function(modificarTask){
           // Convertir la fecha del formato de string a DATE para SQL
           const formattedDate = new Date(date);
   
-          const query = 'UPDATE tasks SET name = ?,description = ? ,date = ? ,hour = ?,id_course = ?) WHERE id_task = ?';
+          const query = 'UPDATE tasks SET name = ?,description = ? ,date = ? ,hour = ?,id_course = ? WHERE id_task = ?';
           const [resultModTask,fieldsModTask] = await conexion.query(query, [name,description,formattedDate,hour,id_course,id_task]);
         
           if(resultModTask.affectedRows === 0){

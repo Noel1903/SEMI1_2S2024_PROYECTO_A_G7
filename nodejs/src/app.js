@@ -15,6 +15,8 @@ const usuarioRoute = require('./routes/usuarioRoute');
 const cursoRoute = require('./routes/cursoRoute');
 const recordatorioRoute = require('./routes/recordatorioRoute');
 const tareaRoute = require('./routes/tareaRoute');
+const horarioRoute = require('./routes/horarioRoute');
+
 //morgarn
 app.use(morgan('tiny'))
 // Middleware para manejar datos JSON
@@ -28,6 +30,7 @@ app.use('/', usuarioRoute);
 app.use('/', cursoRoute);
 app.use('/',recordatorioRoute);
 app.use('/', tareaRoute);
+app.use('/',horarioRoute);
 
 // Puerto de escucha
 const PORT = process.env.PORT || 4000;
