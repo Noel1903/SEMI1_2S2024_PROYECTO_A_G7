@@ -1,6 +1,3 @@
-
-app.use('/', tareaRoute);
-const tareaRoute = require('./routes/tareaRoute');
 const dotenv = require("dotenv");
 dotenv.config({path: '../.env'});
 
@@ -17,7 +14,7 @@ const app = express();
 const usuarioRoute = require('./routes/usuarioRoute');
 const cursoRoute = require('./routes/cursoRoute');
 const recordatorioRoute = require('./routes/recordatorioRoute');
-
+const tareaRoute = require('./routes/tareaRoute');
 //morgarn
 app.use(morgan('tiny'))
 // Middleware para manejar datos JSON
@@ -30,6 +27,7 @@ app.use(express.json());
 app.use('/', usuarioRoute);
 app.use('/', cursoRoute);
 app.use('/',recordatorioRoute);
+app.use('/', tareaRoute);
 
 // Puerto de escucha
 const PORT = process.env.PORT || 4000;
