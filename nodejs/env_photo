@@ -1,0 +1,40 @@
+# PUERTO  SERVIDOR
+PORT = 5000
+
+# VARIABLES DB
+# DATABASE_URL = mysql://root:123Noel@localhost:3306/db_semi1_p2
+
+# Descomentar estas variables
+#DB_HOST = db-semi1.cb42qk4yup5j.us-east-2.rds.amazonaws.com
+#DB_PORT = 3306
+#DB_USER = root
+#DB_PASS = dbAdmin2024*
+#DB_NAME = db_semi1_p2
+
+#CONFIGURACION DE S3
+S3_BUCKET = "practica2-semi1-a-2s2024-imagenes-g7"
+S3_REGION = us-east-1
+AWS_ACCESS_KEY_ID=AKIA5KZFHHO75DHTFMXZ
+AWS_SECRET_ACCESS_KEY=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
+
+
+#https://practica2-semi1-a-2s2024-imagenes-g7.s3.amazonaws.com/
+#Esta es la ruta del S3 y las carpetas son
+fotoPerfilS3 ='https://practica2-semi1-a-2s2024-imagenes-g7.s3.amazonaws.com/Fotos_Perfil/'
+fotoPublicadas = 'https://practica2-semi1-a-2s2024-imagenes-g7.s3.amazonaws.com/Fotos_Publicadas/'
+fotoReconocimientoFacialS3 = 'https://practica2-semi1-a-2s2024-imagenes-g7.s3.amazonaws.com/Fotos_Reconocimiento_Facial/'
+
+#REKOGNITION
+
+#link: https://916516715455.signin.aws.amazon.com/console
+#user: user-rekognition
+#pass: userRK123
+
+REKOGNITION_REGION = us-east-1
+REKOGNITION_ACCESS_KEY = AKIA5KZFHHO7XYTDKHOD
+REKOGNITION_ACCESS_SECRET_KEY = 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
+
+# TRASLATE
+TRANSLATE_REGION = us-east-1
+TRANSLATE_ACCESS_KEY = AKIA5KZFHHO7XYTDKHOD
+TRANSLATE_ACCESS_SECRET_KEY = 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

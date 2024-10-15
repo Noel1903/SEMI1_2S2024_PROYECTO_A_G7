@@ -1,4 +1,6 @@
 
+app.use('/', tareaRoute);
+const tareaRoute = require('./routes/tareaRoute');
 const dotenv = require("dotenv");
 dotenv.config({path: '../.env'});
 
@@ -7,12 +9,14 @@ require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
-const morgan = require('morgan');
+const morgan = require('morgan')
 
 const app = express();
 //INSERT INTO songs (id_song,name, photo_url, duration, artist, file_url) VALUES (11,"juan","ddj/daf/",'00:11:12',"pedro","df/ddf/ds");
 //Importacion de modulos de rutas
-const tareaRoute = require('./routes/tareaRoute');
+const usuarioRoute = require('./routes/usuarioRoute');
+const cursoRoute = require('./routes/cursoRoute');
+const recordatorioRoute = require('./routes/recordatorioRoute');
 
 //morgarn
 app.use(morgan('tiny'))
@@ -23,7 +27,9 @@ app.use(express.json());
  app.use(cors());
 
 // Rutas de usuario
-app.use('/', tareaRoute);
+app.use('/', usuarioRoute);
+app.use('/', cursoRoute);
+app.use('/',recordatorioRoute);
 
 // Puerto de escucha
 const PORT = process.env.PORT || 4000;
