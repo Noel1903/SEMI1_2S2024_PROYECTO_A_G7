@@ -1,10 +1,38 @@
-import React from "react";
-import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Badge,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import axios from "axios";
 
 const Navbar = () => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [notificaciones, setNotificaciones] = useState([]);
+
+  // Obtener las notificaciones del usuario desde el backend
+  const getNotificaciones = async () => {
+    const idUsuario = localStorage.getItem("id_user");
+    try {
+      const response = await axios.post("http://localhost:5000/get_notifications_user", {
+        id_user: idUsuario,
+      });
+      setNotificaciones(response.data);
+    } catch (error) {
+      console.error("Error al obtener notificaciones:", error);
+    }
+  };
+
+  useEffect(() => {
+    getNotificaciones();
+  }, []);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -21,12 +49,9 @@ const Navbar = () => {
           Student Task Manager
         </Typography>
 
-        {/* Botón para ir a la página de inicio */}
         <Button color="inherit" component={Link} to="/home">
           Inicio
         </Button>
-
-        {/* Botones de navegación */}
         <Button color="inherit" component={Link} to="/schedules">
           Horarios
         </Button>
@@ -37,20 +62,28 @@ const Navbar = () => {
           Tareas
         </Button>
 
-        {/* Notificaciones */}
+        {/* Notificaciones con contador */}
         <IconButton color="inherit" onClick={handleMenuClick}>
-          <NotificationsIcon />
+          <Badge badgeContent={notificaciones.length} color="error">
+            <NotificationsIcon />
+          </Badge>
         </IconButton>
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={handleMenuClose}>Notificación 1</MenuItem>
-          <MenuItem onClick={handleMenuClose}>Notificación 2</MenuItem>
+          {notificaciones.length > 0 ? (
+            notificaciones.map((notificacion, index) => (
+              <MenuItem key={index} onClick={handleMenuClose}>
+                {notificacion.message}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem onClick={handleMenuClose}>Sin notificaciones</MenuItem>
+          )}
         </Menu>
 
-        {/* Ver perfil */}
         <Button color="inherit" component={Link} to="/perfil">
           Ver Perfil
         </Button>

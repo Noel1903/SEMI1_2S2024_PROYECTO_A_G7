@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -14,30 +14,14 @@ import {
   TextField,
   IconButton,
 } from "@mui/material";
+import axios from "axios";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DescriptionIcon from "@mui/icons-material/Description"; // Ícono para la descripción
 
 const Reminders = () => {
-  // Lista quemada de recordatorios
-  const [recordatorios, setRecordatorios] = useState([
-    {
-      id: 1,
-      nombre: "Entrega de Proyecto",
-      descripcion: "Subir proyecto final a la plataforma",
-      fecha: "2024-10-12",
-      hora: "18:00",
-    },
-    {
-      id: 2,
-      nombre: "Reunión con el equipo",
-      descripcion: "Revisión de avances",
-      fecha: "2024-10-13",
-      hora: "09:00",
-    },
-  ]);
-
+  const [recordatorios, setRecordatorios] = useState([]);
   const [open, setOpen] = useState(false);
   const [nuevoRecordatorio, setNuevoRecordatorio] = useState({
     nombre: "",
@@ -45,47 +29,66 @@ const Reminders = () => {
     fecha: "",
     hora: "",
   });
-
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const id_user = localStorage.getItem("id_user"); // Obtener ID del usuario
+
+  useEffect(() => {
+    fetchRecordatorios(); // Cargar recordatorios al inicio
+  }, []);
+
+  // Obtener recordatorios del usuario
+  const fetchRecordatorios = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/get_reminders_user", {
+        id_user,
+      });
+      setRecordatorios(response.data);
+    } catch (error) {
+      console.error("Error al obtener recordatorios:", error);
+    }
+  };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
     setIsEditing(false);
-    setNuevoRecordatorio({
-      nombre: "",
-      descripcion: "",
-      fecha: "",
-      hora: "",
-    });
+    setNuevoRecordatorio({ nombre: "", descripcion: "", fecha: "", hora: "" });
   };
 
   const handleChange = (e) => {
-    setNuevoRecordatorio({
-      ...nuevoRecordatorio,
-      [e.target.name]: e.target.value,
-    });
+    setNuevoRecordatorio({ ...nuevoRecordatorio, [e.target.name]: e.target.value });
   };
 
-  const handleCrearRecordatorio = () => {
-    if (isEditing) {
-      setRecordatorios(
-        recordatorios.map((recordatorio) =>
-          recordatorio.id === editId ? { ...nuevoRecordatorio, id: editId } : recordatorio
-        )
-      );
-    } else {
-      setRecordatorios([
-        ...recordatorios,
-        { ...nuevoRecordatorio, id: recordatorios.length + 1 },
-      ]);
+  const handleCrearRecordatorio = async () => {
+    try {
+      if (isEditing) {
+        await axios.put("http://localhost:5000/modify_reminder", {
+          id_reminder: editId,
+          name: nuevoRecordatorio.nombre,
+          description: nuevoRecordatorio.descripcion,
+          date: nuevoRecordatorio.fecha,
+          hour: nuevoRecordatorio.hora,
+          id_user: id_user,
+        });
+      } else {
+        await axios.post("http://localhost:5000/create_reminder", {
+          name: nuevoRecordatorio.nombre,
+          description: nuevoRecordatorio.descripcion,
+          date: nuevoRecordatorio.fecha,
+          hour: nuevoRecordatorio.hora,
+          id_user: id_user,
+        });
+      }
+      fetchRecordatorios(); // Actualizar la lista
+      handleClose();
+    } catch (error) {
+      console.error("Error al crear/modificar recordatorio:", error);
     }
-    handleClose();
   };
 
-  const handleEditar = (id) => {
-    const recordatorio = recordatorios.find((rec) => rec.id === id);
+  const handleEditar = (id_reminder) => {
+    const recordatorio = recordatorios.find((rec) => rec.id_reminder === id_reminder);
     setNuevoRecordatorio({
       nombre: recordatorio.nombre,
       descripcion: recordatorio.descripcion,
@@ -93,12 +96,18 @@ const Reminders = () => {
       hora: recordatorio.hora,
     });
     setIsEditing(true);
-    setEditId(id);
+    setEditId(id_reminder);
     handleOpen();
   };
 
-  const handleEliminar = (id) => {
-    setRecordatorios(recordatorios.filter((recordatorio) => recordatorio.id !== id));
+  const handleEliminar = async (id_reminder) => {
+    try {
+      await axios.delete("http://localhost:5000/delete_reminder", {data: {id_reminder} });
+      alert("Recordatorio eliminado correctamente.");
+      fetchRecordatorios(); // Actualizar la lista
+    } catch (error) {
+      console.error("Error al eliminar recordatorio:", error);
+    }
   };
 
   return (
@@ -114,31 +123,31 @@ const Reminders = () => {
       <List sx={{ mt: 4 }}>
         {recordatorios.map((recordatorio) => (
           <ListItem
-            key={recordatorio.id}
+            key={recordatorio.id_reminder}
             sx={{ backgroundColor: "#f0f4c3", borderRadius: 2, mb: 2 }}
           >
             <ListItemIcon>
               <ScheduleIcon /> {/* Ícono para hora */}
             </ListItemIcon>
             <ListItemText
-              primary={recordatorio.nombre}
+              primary={recordatorio.name}
               secondary={
                 <>
                   <Typography variant="body2" color="textSecondary">
-                    {`Fecha: ${recordatorio.fecha}, Hora: ${recordatorio.hora}`}
+                    {`Fecha: ${recordatorio.date}, Hora: ${recordatorio.hour}`}
                   </Typography>
                   <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
                     <DescriptionIcon sx={{ fontSize: "small" }} />{" "}
-                    {recordatorio.descripcion}
+                    {recordatorio.description}
                   </Typography>
                 </>
               }
             />
             {/* Botones para editar y eliminar */}
-            <IconButton edge="end" onClick={() => handleEditar(recordatorio.id)}>
+            <IconButton edge="end" onClick={() => handleEditar(recordatorio.id_reminder)}>
               <EditIcon />
             </IconButton>
-            <IconButton edge="end" onClick={() => handleEliminar(recordatorio.id)}>
+            <IconButton edge="end" onClick={() => handleEliminar(recordatorio.id_reminder)}>
               <DeleteIcon />
             </IconButton>
           </ListItem>
@@ -175,9 +184,7 @@ const Reminders = () => {
             onChange={handleChange}
             fullWidth
             margin="normal"
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
           />
           <TextField
             label="Hora"
@@ -187,9 +194,7 @@ const Reminders = () => {
             onChange={handleChange}
             fullWidth
             margin="normal"
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
           />
         </DialogContent>
         <DialogActions>

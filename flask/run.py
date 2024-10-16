@@ -24,8 +24,9 @@ app.add_url_rule('/create_user', 'create_user', create_user, methods=['POST'])
 #actualizar un usuario form-data
 app.add_url_rule('/update_user', 'update_user', update_user, methods=['PUT'])
 #Eliminar un usuario form-data
-#app.add_url_rule('/delete_user', 'delete_user', delete_user, methods=['DELETE'])
-
+app.add_url_rule('/delete_user', 'delete_user', delete_user, methods=['DELETE'])
+#obtener todos los usuarios
+app.add_url_rule('/get_users', 'get_users', get_users, methods=['GET'])
 
 ############Rutas de Cursos
 app.add_url_rule('/create_course', 'create_course', create_course, methods=['POST'])

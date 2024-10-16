@@ -1,64 +1,109 @@
-import React, { useState } from "react";
-import { Box, Typography, Button, List, ListItem, ListItemIcon, ListItemText, Dialog, DialogActions, DialogContent, DialogTitle, TextField, MenuItem } from "@mui/material";
-import ScheduleIcon from "@mui/icons-material/Schedule"; // Ícono de reloj para los horarios
-import { v4 as uuidv4 } from 'uuid'; // Para generar IDs únicos para los horarios
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  CardActions,
+  Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  MenuItem,
+  IconButton,
+} from "@mui/material";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 const Schedules = () => {
-  // Lista de cursos disponibles
-  const cursosDisponibles = [
-    { id: 1, nombre: "Curso de React" },
-    { id: 2, nombre: "Curso de Python" },
-    { id: 3, nombre: "Curso de AWS" },
-    { id: 4, nombre: "Curso de Diseño UX/UI" },
-  ];
-
-  // Lista quemada de horarios
-  const [horarios, setHorarios] = useState([
-    {
-      id: uuidv4(),
-      curso: "Curso de React",
-      inicio: "08:00",
-      fin: "10:00",
-      color: "#f28b82", // Color diferente para cada horario
-    },
-    {
-      id: uuidv4(),
-      curso: "Curso de Python",
-      inicio: "11:00",
-      fin: "13:00",
-      color: "#fbbc04",
-    },
-    {
-      id: uuidv4(),
-      curso: "Curso de AWS",
-      inicio: "14:00",
-      fin: "16:00",
-      color: "#a7ffeb",
-    },
-  ]);
-
-  const [open, setOpen] = useState(false); // Estado para controlar el diálogo
+  const [horarios, setHorarios] = useState([]);
+  const [cursos, setCursos] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
   const [nuevoHorario, setNuevoHorario] = useState({
-    curso: "",
+    id_course: "",
     inicio: "",
     fin: "",
   });
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  // Obtener horarios y cursos desde el backend
+  useEffect(() => {
+    const getHorarios = async () => {
+      const idUsuario = localStorage.getItem("id_user");
+      const response = await axios.post(
+        "http://localhost:5000/get_schedules_by_user",
+        { id_user: idUsuario }
+      );
+      setHorarios(response.data);
+    };
 
-  // Manejadores para los cambios en el formulario de creación de horario
-  const handleChange = (e) => {
-    setNuevoHorario({
-      ...nuevoHorario,
-      [e.target.name]: e.target.value,
-    });
+    const getCursos = async () => {
+      const response = await axios.get("http://localhost:5000/get_all_courses");
+      setCursos(response.data);
+    };
+
+    getHorarios();
+    getCursos();
+  }, []);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    setIsEditing(false);
+    setNuevoHorario({ id_course: "", inicio: "", fin: "" });
   };
 
-  const handleCrearHorario = () => {
-    const color = `#${Math.floor(Math.random()*16777215).toString(16)}`; // Generar color aleatorio
-    setHorarios([...horarios, { ...nuevoHorario, id: uuidv4(), color }]);
+  const handleChange = (e) =>
+    setNuevoHorario({ ...nuevoHorario, [e.target.name]: e.target.value });
+
+  const handleCrearHorario = async () => {
+    const idUsuario = localStorage.getItem("id_user");
+
+    const data = {
+      datetime_start: nuevoHorario.inicio,
+      datetime_end: nuevoHorario.fin,
+      id_course: nuevoHorario.id_course,
+      id_user: idUsuario,
+    };
+
+    if (isEditing) {
+      await axios.put("http://localhost:5000/update_schedule", {
+        id_schedule: editId,
+        ...data,
+      });
+      setHorarios((prev) =>
+        prev.map((h) => (h.id_schedule === editId ? { ...h, ...data } : h))
+      );
+    } else {
+      await axios.post("http://localhost:5000/create_schedule", data);
+      setHorarios([...horarios, { ...data, id_schedule: uuidv4() }]);
+    }
     handleClose();
+  };
+
+  const handleEditar = (id_schedule) => {
+    const horario = horarios.find((h) => h.id_schedule === id_schedule);
+    setNuevoHorario({
+      id_course: horario.id_course,
+      inicio: horario.datetime_start,
+      fin: horario.datetime_end,
+    });
+    setIsEditing(true);
+    setEditId(id_schedule);
+    handleOpen();
+  };
+
+  const handleEliminar = async (id_schedule) => {
+    await axios.delete("http://localhost:5000/delete_schedule", {data: {id_schedule} });
+    alert("Horario eliminado correctamente!");
+    setHorarios((prev) => prev.filter((h) => h.id_schedule !== id_schedule));
   };
 
   return (
@@ -66,41 +111,53 @@ const Schedules = () => {
       <Typography variant="h4" gutterBottom>
         Gestión de Horarios
       </Typography>
-      <Button variant="contained" color="primary" onClick={handleOpen}>
+      <Button variant="contained" color="primary" onClick={handleOpen} sx={{ mb: 3 }}>
         Crear Horario
       </Button>
 
-      {/* Lista de Horarios */}
-      <List sx={{ mt: 4 }}>
+      <Grid container spacing={3}>
         {horarios.map((horario) => (
-          <ListItem key={horario.id} sx={{ backgroundColor: horario.color, borderRadius: 2, mb: 2 }}>
-            <ListItemIcon>
-              <ScheduleIcon /> {/* Ícono de reloj */}
-            </ListItemIcon>
-            <ListItemText
-              primary={horario.curso}
-              secondary={`Inicio: ${horario.inicio} - Fin: ${horario.fin}`}
-            />
-          </ListItem>
+          <Grid item xs={12} md={6} lg={4} key={horario.id_schedule}>
+            <Card sx={{ backgroundColor: "#f5f5f5", borderRadius: 2 }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  {horario.course}
+                </Typography>
+                <Typography color="textSecondary">
+                  Inicio: {horario.datetime_start}
+                </Typography>
+                <Typography color="textSecondary">
+                  Fin: {horario.datetime_end}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <IconButton onClick={() => handleEditar(horario.id_schedule)}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton onClick={() => handleEliminar(horario.id_schedule)}>
+                  <DeleteIcon />
+                </IconButton>
+              </CardActions>
+            </Card>
+          </Grid>
         ))}
-      </List>
+      </Grid>
 
-      {/* Ventana emergente para crear un nuevo horario */}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Crear Nuevo Horario</DialogTitle>
+        <DialogTitle>{isEditing ? "Editar Horario" : "Crear Horario"}</DialogTitle>
         <DialogContent>
           <TextField
             select
             label="Selecciona un curso"
-            name="curso"
-            value={nuevoHorario.curso}
+            name="id_course"
+            value={nuevoHorario.id_course}
             onChange={handleChange}
             fullWidth
             margin="normal"
           >
-            {cursosDisponibles.map((curso) => (
-              <MenuItem key={curso.id} value={curso.nombre}>
-                {curso.nombre}
+            {cursos.map((curso) => (
+              <MenuItem key={curso.id_course} value={curso.id_course}>
+                {curso.name}
               </MenuItem>
             ))}
           </TextField>
@@ -112,9 +169,7 @@ const Schedules = () => {
             onChange={handleChange}
             fullWidth
             margin="normal"
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
           />
           <TextField
             label="Hora de Fin"
@@ -124,15 +179,13 @@ const Schedules = () => {
             onChange={handleChange}
             fullWidth
             margin="normal"
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button onClick={handleCrearHorario} variant="contained" color="primary">
-            Crear
+            {isEditing ? "Actualizar" : "Crear"}
           </Button>
         </DialogActions>
       </Dialog>
