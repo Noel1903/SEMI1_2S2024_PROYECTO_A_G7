@@ -4,20 +4,37 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Home from "./components/Home";
 import Navbar from "./components/Navbar";
+import NavbarAdmin from "./adminComponens/NavbarAdmin"; // Nuevo Navbar para admins
 import Schedules from "./components/Schedules";
 import Reminders from "./components/Reminders";
 import Tasks from "./components/Tasks";
+import HomeAdmin from "./adminComponens/HomeAdmin";
+import CreateCourses from "./adminComponens/CreateCourses";
+import CreateTasks from "./adminComponens/CreateTasks";
+import UsersAdmin from "./adminComponens/UsersAdmin";
+import VerPerfilAdmin from "./adminComponens/VerPerfilAdmin";
+import Perfil from "./components/Perfil";
 import { ThemeProvider } from "@mui/material/styles";
+
 import theme from "./theme";
 
-// Componente que contiene la lógica para mostrar el Navbar condicionalmente
+// Componente que contiene la lógica para mostrar el Navbar adecuado
 function Layout() {
-  const location = useLocation(); // Usamos el hook useLocation para obtener la ruta actual
+  const location = useLocation();
+
+  // Verifica si el usuario es admin (ej. basado en localStorage)
+  const isAdmin = localStorage.getItem("role") === "admin"; 
+
+  const renderNavbar = () => {
+    if (location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/") {
+      return null; // No mostrar ningún Navbar en las rutas de login y registro
+    }
+    return isAdmin ? <NavbarAdmin /> : <Navbar />;
+  };
 
   return (
     <>
-      {/* Solo mostramos el Navbar si no estamos en /login o /register */}
-      {location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/" && <Navbar />}
+      {renderNavbar()}
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
@@ -26,6 +43,12 @@ function Layout() {
         <Route path="/schedules" element={<Schedules />} />
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/tasks" element={<Tasks />} />
+        <Route path="/homeAdmin" element={<HomeAdmin />} />
+        <Route path="/coursesAdmin" element={<CreateCourses />} />
+        <Route path="/taskAdmin" element={<CreateTasks />} />
+        <Route path="/usersAdmin" element={<UsersAdmin />} />
+        <Route path="/perfilAdmin" element={<VerPerfilAdmin />} />
+        <Route path="/perfil" element={<Perfil />} />
       </Routes>
     </>
   );
@@ -35,7 +58,6 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        {/* El componente Layout maneja la renderización condicional del Navbar y las rutas */}
         <Layout />
       </Router>
     </ThemeProvider>

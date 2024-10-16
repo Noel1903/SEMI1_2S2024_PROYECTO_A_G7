@@ -1,10 +1,17 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Box, TextField, Button, Typography, Container, Stack, Avatar } from "@mui/material";
+import axios from "axios";
 
 const Register = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate(); // Para redireccionar al login después del registro
 
   // Manejar la carga de la imagen
   const handleImageChange = (e) => {
@@ -12,12 +19,40 @@ const Register = () => {
     if (file) {
       setSelectedImage(file);
 
-      // Crear la URL para previsualizar la imagen
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  // Manejar el registro
+  const handleRegister = async (e) => {
+    e.preventDefault(); // Evita el comportamiento por defecto del formulario
+    setLoading(true);
+    setError("");
+
+    const formData = new FormData();
+    formData.append("username", username);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("role", "user");
+    if (selectedImage) formData.append("url_img", selectedImage);
+
+    try {
+      const response = await axios.post("http://localhost:5000/create_user", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response.status === 200) {
+        alert("Registration successful!"); // Notificación
+        navigate("/login"); // Redirigir al login
+      }
+    } catch (err) {
+      setError("Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,25 +69,24 @@ const Register = () => {
         <Typography variant="h4" gutterBottom>
           Create an Account
         </Typography>
-        <Box component="form" sx={{ mt: 3 }}>
+        <Box component="form" onSubmit={handleRegister} sx={{ mt: 3 }}>
           <Stack spacing={2}>
-            <TextField
-              label="Full Name"
-              variant="outlined"
-              fullWidth
-              required
-            />
             <TextField
               label="Username"
               variant="outlined"
               fullWidth
               required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <TextField
               label="Email"
+              type="email"
               variant="outlined"
               fullWidth
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               label="Password"
@@ -60,44 +94,36 @@ const Register = () => {
               variant="outlined"
               fullWidth
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
 
-            {/* Cargar imagen */}
-            <Button
-              variant="outlined"
-              component="label"
-              color="primary"
-              fullWidth
-            >
+            <Button variant="outlined" component="label" color="primary" fullWidth>
               Upload Profile Image
-              <input
-                type="file"
-                hidden
-                accept="image/*"
-                onChange={handleImageChange}
-              />
+              <input type="file" hidden accept="image/*" onChange={handleImageChange} />
             </Button>
 
-            {/* Mostrar previsualización de la imagen */}
             {previewImage && (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  mt: 2,
-                }}
-              >
-                <Avatar
-                  alt="Preview Image"
-                  src={previewImage}
-                  sx={{ width: 100, height: 100 }}
-                />
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                <Avatar alt="Preview Image" src={previewImage} sx={{ width: 100, height: 100 }} />
               </Box>
             )}
 
-            <Button variant="contained" color="primary" fullWidth>
-              Register
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={loading}
+            >
+              {loading ? "Registering..." : "Register"}
             </Button>
+
+            {error && (
+              <Typography color="error" variant="body2" sx={{ mt: 2 }}>
+                {error}
+              </Typography>
+            )}
           </Stack>
           <Typography variant="body2" sx={{ mt: 2 }}>
             Already have an account?{" "}

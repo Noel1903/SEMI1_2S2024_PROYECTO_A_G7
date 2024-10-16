@@ -92,11 +92,20 @@ def update_schedule():
         return jsonify({'message': 'Horario no encontrado'}), 404
     
     try:
+        #obtener la fecha de hoy
+        now = datetime.now()
+        #convertir la fecha a string
+        now_str = now.strftime('%Y-%m-%d')
+        start_time= f"{now_str} {data['datetime_start']}:00"
+        start_time_str = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+        end_time= f"{now_str} {data['datetime_end']}:00"
+        end_time_str = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
+        
         # Verifica si cada campo viene en el JSON y actualiza solo los presentes
         if 'datetime_start' in data:
-            schedule.datetime_start = datetime.strptime(data['datetime_start'], '%Y-%m-%d %H:%M:%S')
+            schedule.datetime_start = start_time_str
         if 'datetime_end' in data:
-            schedule.datetime_end = datetime.strptime(data['datetime_end'], '%Y-%m-%d %H:%M:%S')
+            schedule.datetime_end = end_time_str
         if 'id_user' in data:
             schedule.id_user = data['id_user']
         if 'id_course' in data:

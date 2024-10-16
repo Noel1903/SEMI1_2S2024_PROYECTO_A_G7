@@ -16,10 +16,11 @@ def login():
     user = db.query(User).filter(User.email == data['email']).first()
     if user is None:
         db.close()
-        return jsonify({'message':'Usuario no encontrado'})
+        return jsonify({'message':'Usuario no encontrado'}),500
     if not user.check_password(data['password']):
         db.close()
-        return jsonify({'message':'Contraseña incorrecta'})
+        return jsonify({'message':'Contraseña incorrecta'}),500
+    
     response = {
         "id_user": user.id_user,
         "username": user.username,
@@ -89,7 +90,7 @@ def create_user():
         db.add(new_user)
         db.commit()
         db.close()
-        return jsonify({"message": "Usuario registrado con éxito"}), 201
+        return jsonify({"message": "Usuario registrado con éxito"}), 200
     except Exception as e:
         db.rollback()
         db.close()
@@ -139,3 +140,39 @@ def update_user():
         db.close()
         return jsonify({'message': f'Error al actualizar usuario: {str(e)}'}), 500
 
+
+def get_users():
+    db: Session = next(get_db())
+    users = db.query(User).all()
+    response = []
+    for user in users:
+        response.append({
+            "id_user": user.id_user,
+            "username": user.username,
+            "email": user.email,
+            "url_img": user.url_img,
+            "role": user.role
+        })
+    db.close()
+    return jsonify(response), 200
+
+def delete_user():
+    db: Session = next(get_db())
+    data = request.get_json()
+    user_id = data.get('id_user')
+    if user_id is None:
+        db.close()
+        return jsonify({'message': 'id_user es requerido'}), 400
+    user = db.query(User).filter(User.id_user == user_id).first()
+    if user is None:
+        db.close()
+        return jsonify({'message': 'Usuario no encontrado'}), 404
+    try:
+        db.delete(user)
+        db.commit()
+        db.close()
+        return jsonify({'message': 'Usuario eliminado con éxito'}), 200
+    except Exception as e:
+        db.rollback()
+        db.close()
+        return jsonify({'message': f'Error al eliminar usuario: {str(e)}'}), 500

@@ -1,95 +1,111 @@
-import React from "react";
-import { Box, Typography, List, ListItem, ListItemIcon, ListItemText, Divider } from "@mui/material";
-import BookIcon from "@mui/icons-material/Book"; // Ícono de libro para cursos
-import AccessTimeIcon from "@mui/icons-material/AccessTime"; // Ícono de reloj para la hora
-import NotificationsIcon from "@mui/icons-material/Notifications"; // Ícono de notificación para los recordatorios
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Box, Typography, List, Card, CardContent, 
+  CardActions, Button, Divider, Grid
+} from "@mui/material";
+import BookIcon from "@mui/icons-material/Book";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const Home = () => {
-  // Lista de cursos
-  const cursos = [
-    { nombre: "Curso de React" },
-    { nombre: "Curso de Python" },
-    { nombre: "Curso de AWS" },
-    { nombre: "Curso de Diseño UX/UI" },
-  ];
+  const [cursos, setCursos] = useState([]); // Estado para cursos
+  const [recordatorios, setRecordatorios] = useState([]); // Estado para recordatorios
+  const id_user = localStorage.getItem("id_user"); // Obtener id_user de localStorage
 
-  // Lista de recordatorios
-  const recordatorios = [
-    {
-      nombre: "Entrega de Proyecto",
-      descripcion: "Finalizar y entregar el proyecto de React.",
-      fecha: "10 Octubre 2024",
-      hora: "15:00",
-    },
-    {
-      nombre: "Reunión con equipo",
-      descripcion: "Reunión para discutir avances del sprint.",
-      fecha: "11 Octubre 2024",
-      hora: "10:00",
-    },
-    {
-      nombre: "Examen de AWS",
-      descripcion: "Prepararse para el examen de certificación AWS.",
-      fecha: "12 Octubre 2024",
-      hora: "09:00",
-    },
-  ];
+  useEffect(() => {
+    fetchCursos(); // Cargar cursos
+    fetchRecordatorios(); // Cargar recordatorios
+  }, []);
+
+  const fetchCursos = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/get_all_courses");
+      setCursos(response.data);
+    } catch (error) {
+      console.error("Error al obtener cursos:", error);
+    }
+  };
+
+  const fetchRecordatorios = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/get_reminders_user", { id_user });
+      setRecordatorios(response.data);
+    } catch (error) {
+      console.error("Error al obtener recordatorios:", error);
+    }
+  };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Bienvenido a tu panel de gestión
+    <Box sx={{ p: 4, backgroundColor: "#f0f2f5", minHeight: "100vh" }}>
+      <Typography variant="h4" gutterBottom align="center" sx={{ fontWeight: "bold", color: "#3f51b5" }}>
+        Bienvenido a tu Panel de Gestión
       </Typography>
-      <Typography variant="body1" gutterBottom>
+      <Typography variant="body1" align="center" gutterBottom sx={{ mb: 4 }}>
         Aquí puedes gestionar tus tareas, horarios y recordatorios.
       </Typography>
 
-      {/* Lista de Cursos */}
-      <Typography variant="h6" sx={{ mt: 4 }}>
-        Cursos Asignados
-      </Typography>
-      <List>
-        {cursos.map((curso, index) => (
-          <ListItem key={index}>
-            <ListItemIcon>
-              <BookIcon /> {/* Ícono que representa el curso */}
-            </ListItemIcon>
-            <ListItemText primary={curso.nombre} />
-          </ListItem>
-        ))}
-      </List>
-
-      <Divider sx={{ my: 4 }} />
-
-      {/* Lista de Recordatorios */}
-      <Typography variant="h6" sx={{ mt: 4 }}>
-        Recordatorios
-      </Typography>
-      <List>
-        {recordatorios.map((recordatorio, index) => (
-          <ListItem key={index} alignItems="flex-start">
-            <ListItemIcon>
-              <NotificationsIcon /> {/* Ícono que representa el recordatorio */}
-            </ListItemIcon>
-            <ListItemText
-              primary={recordatorio.nombre}
-              secondary={
-                <>
-                  <Typography variant="body2" component="span">
-                    {recordatorio.descripcion}
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                    <AccessTimeIcon sx={{ mr: 1 }} /> {/* Ícono que representa la hora */}
-                    <Typography variant="body2">
-                      {recordatorio.fecha} - {recordatorio.hora}
+      <Grid container spacing={4}>
+        {/* Sección de Cursos */}
+        <Grid item xs={12} md={6}>
+          <Typography variant="h5" sx={{ mb: 2, color: "#2e7d32" }}>
+            Cursos Existentes
+          </Typography>
+          <List>
+            {cursos.length > 0 ? (
+              cursos.map((curso, index) => (
+                <Card key={index} sx={{ mb: 2, backgroundColor: "#e8f5e9" }}>
+                  <CardContent>
+                    <Typography variant="h6" sx={{ display: "flex", alignItems: "center" }}>
+                      <BookIcon sx={{ mr: 1, color: "#4caf50" }} />
+                      {curso.name}
                     </Typography>
-                  </Box>
-                </>
-              }
-            />
-          </ListItem>
-        ))}
-      </List>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" color="primary">
+                      Ver más
+                    </Button>
+                  </CardActions>
+                </Card>
+              ))
+            ) : (
+              <Typography variant="body2">No tienes cursos asignados.</Typography>
+            )}
+          </List>
+        </Grid>
+
+        {/* Sección de Recordatorios */}
+        <Grid item xs={12} md={6}>
+          <Typography variant="h5" sx={{ mb: 2, color: "#1976d2" }}>
+            Recordatorios
+          </Typography>
+          <List>
+            {recordatorios.length > 0 ? (
+              recordatorios.map((recordatorio, index) => (
+                <Card key={index} sx={{ mb: 2, backgroundColor: "#e3f2fd" }}>
+                  <CardContent>
+                    <Typography variant="h6" sx={{ display: "flex", alignItems: "center" }}>
+                      <NotificationsIcon sx={{ mr: 1, color: "#2196f3" }} />
+                      {recordatorio.name}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      {recordatorio.description}
+                    </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+                      <AccessTimeIcon sx={{ mr: 1, color: "#757575" }} />
+                      <Typography variant="body2">
+                        {recordatorio.date} - {recordatorio.hour}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <Typography variant="body2">No tienes recordatorios pendientes.</Typography>
+            )}
+          </List>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

@@ -13,7 +13,7 @@ def create_course():
     data = request.get_json()
     db: Session = next(get_db())
     try:
-         #obtener la fecha de hoy
+        #obtener la fecha de hoy
         now = datetime.now()
         #convertir la fecha a string
         now_str = now.strftime('%Y-%m-%d')
@@ -75,6 +75,7 @@ def get_course():
 def update_course():
     data = request.get_json()
     db: Session = next(get_db())
+    print(data)
     course = db.query(Course).filter(Course.id_course == data['id_course']).first()
     if course is None:
         db.close()
@@ -136,4 +137,4 @@ def  get_courses():
             "end_time": course.end_time
         })
     db.close()
-    return jsonify(response),
+    return jsonify(response),200

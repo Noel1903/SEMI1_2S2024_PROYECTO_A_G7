@@ -17,10 +17,9 @@ def get_notifications_user():
         for notification in notifications:
             response.append({
                 "id_notification": notification.id_notification,
-                "name": notification.name,
-                "description": notification.description,
-                "date": notification.date,
-                "hour": notification.hour,
+                "message": notification.message,
+                "type": notification.type,
+                "datetime_notification": notification.datetime_notification,
                 "id_user": notification.id_user
             })
         db.close()
@@ -38,10 +37,9 @@ def  get_notifications():
         for notification in notifications:
             response.append({
                 "id_notification": notification.id_notification,
-                "name": notification.name,
-                "description": notification.description,
-                "date": notification.date,
-                "hour": notification.hour,
+                "message": notification.message,
+                "type": notification.type,
+                "datetime_notification": notification.datetime_notification,
                 "id_user": notification.id_user
             })
         db.close()
