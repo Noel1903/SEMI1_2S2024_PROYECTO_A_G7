@@ -176,3 +176,105 @@ def delete_user():
         db.rollback()
         db.close()
         return jsonify({'message': f'Error al eliminar usuario: {str(e)}'}), 500
+    
+
+
+
+
+def create_rek():
+    db: Session = next(get_db())
+
+    # Obtener los datos del formulario form-data
+    id_user = request.form.get('id_user')
+    file = request.files.get('image')  # Obtener el archivo de imagen desde el form-data
+    try:
+        image_url = upload_img_Facial(file)
+        if not image_url:
+            return jsonify({"message": "Error al subir la imagen"}), 500
+        
+        user = db.query(User).filter(User.id_user == id_user).first()
+        if user is None:
+            db.close()
+            return jsonify({'message': 'Usuario no encontrado'}), 404
+        
+        url_rekognition = image_url
+        user.url_rekognition = url_rekognition
+        db.commit()
+        db.close()
+        return jsonify({"message": "Imagen subida con éxito"}), 200
+    except Exception as e:
+        db.rollback()
+        db.close()
+        return jsonify({'message': f'Error al subir imagen: {str(e)}'}), 500
+    
+
+def compare_faces(source_image, target_image_s3):
+    response = rekognition_client.compare_faces(
+        SourceImage={'Bytes': source_image},
+        TargetImage={'S3Object': {'Bucket': os.getenv('S3_BUCKET'), 'Name': target_image_s3}},
+        SimilarityThreshold=90  # Umbral de similitud (puedes ajustarlo)
+    )
+    return response
+
+def get_rek():
+    db: Session = next(get_db())
+
+    try:
+        # Asegúrate de que se está recibiendo un archivo
+        if 'image' not in request.files:
+            return jsonify({'message': 'No se ha recibido ninguna imagen.'}), 400
+        
+        # Obtener el archivo de imagen
+        image_file = request.files['image']
+        
+        # Lee el archivo como bytes
+        image_bytes = image_file.read()
+
+        # Obtener la lista de archivos en el bucket de S3 para comparar
+        response = s3_client.list_objects_v2(Bucket=os.getenv('S3_BUCKET'), Prefix='reconocimiento_facial/')
+        if 'Contents' not in response:
+            return jsonify({'message': 'No se encontraron imágenes en el bucket.'}), 404
+        
+        # Comparar la imagen enviada con cada imagen en el bucket
+        for obj in response['Contents']:
+            if obj['Key'].endswith('.jpg') or obj['Key'].endswith('.png'):
+                s3_image_key = obj['Key']
+
+                # Obtener la imagen del bucket S3
+                s3_response = s3_client.get_object(Bucket=os.getenv('S3_BUCKET'), Key=s3_image_key)
+                s3_image_bytes = s3_response['Body'].read()
+
+                # Realizar la comparación
+                rekognition_response = rekognition_client.compare_faces(
+                    SourceImage={'Bytes': image_bytes},
+                    TargetImage={'Bytes': s3_image_bytes}
+                )
+                #obtner el link de la imagen que coincide
+                s3_image_key = f"https://{os.getenv('S3_BUCKET')}.s3.amazonaws.com/{s3_image_key}"
+                
+                # Si se encuentra una coincidencia
+                if rekognition_response['FaceMatches']:
+                    match = rekognition_response['FaceMatches'][0]
+                    similarity = match['Similarity']
+                    user = db.query(User).filter(User.url_rekognition == s3_image_key).first()
+                    if user is None:
+                        db.close()
+                        return jsonify({'message': 'Usuario no encontrado'}), 404
+                    id_user = user.id_user
+
+                    return jsonify({
+                        'message': 'Reconocimiento facial exitoso',
+                        'matched_image': s3_image_key,
+                        'similarity': similarity,
+                        'id_user': id_user
+                    }), 200
+        
+        # Si no hay coincidencias
+        db.close()
+
+        return jsonify({'message': 'No se encontraron coincidencias'}), 404
+
+    except Exception as e:
+        db.rollback()
+        db.close()
+        return jsonify({'message': f'Error en el reconocimiento facial: {str(e)}'}), 500

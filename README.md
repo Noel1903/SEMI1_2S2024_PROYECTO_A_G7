@@ -399,3 +399,51 @@
     "error":"No se subió la tarea"
 }
 ```
+
+
+
+# Reconocimiento facial
+
+## POST: localhost:5000/create_rekognition
+```javascript
+
+//json
+{
+    "id_user":1,
+    "image":"formData"
+}
+
+// response
+//exito
+{
+   "msg":"Imagen subida correctamente"
+}
+
+//error
+{
+    "error":"No se subió la imagen"
+}
+```
+
+## POST: localhost:5000/get_rekognition
+```javascript
+
+//json
+{
+    "image":"formData"
+}
+
+// response
+//exito
+{
+    'message': 'Reconocimiento facial exitoso',
+    'matched_image': s3_image_key,
+    'similarity': similarity,
+    'id_user': id_user
+}
+
+//error
+{
+    "error":"No se encontro usuario"
+}
+```

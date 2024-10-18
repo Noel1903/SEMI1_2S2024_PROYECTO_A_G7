@@ -27,6 +27,10 @@ app.add_url_rule('/update_user', 'update_user', update_user, methods=['PUT'])
 app.add_url_rule('/delete_user', 'delete_user', delete_user, methods=['DELETE'])
 #obtener todos los usuarios
 app.add_url_rule('/get_users', 'get_users', get_users, methods=['GET'])
+#crear rekognition
+app.add_url_rule('/create_rekognition', 'create_rekognition', create_rek, methods=['POST'])
+#obtener rekognition
+app.add_url_rule('/get_rekognition', 'get_rekognition', get_rek, methods=['POST'])
 
 ############Rutas de Cursos
 app.add_url_rule('/create_course', 'create_course', create_course, methods=['POST'])
