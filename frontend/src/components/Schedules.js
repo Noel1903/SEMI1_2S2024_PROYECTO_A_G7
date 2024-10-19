@@ -15,7 +15,6 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
-import ScheduleIcon from "@mui/icons-material/Schedule";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
@@ -32,16 +31,29 @@ const Schedules = () => {
     inicio: "",
     fin: "",
   });
+  const id_user = localStorage.getItem("id_user");
 
   // Obtener horarios y cursos desde el backend
   useEffect(() => {
     const getHorarios = async () => {
-      const idUsuario = localStorage.getItem("id_user");
-      const response = await axios.post(
-        "http://localhost:5000/get_schedules_by_user",
-        { id_user: idUsuario }
-      );
-      setHorarios(response.data);
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/get_schedules_by_user",
+          { id_user }
+        );
+        const horariosConNombre = await Promise.all(
+          response.data.map(async (horario) => {
+            const { data: curso } = await axios.post(
+              "http://localhost:5000/get_course",
+              { id_course: horario.id_course }
+            );
+            return { ...horario, course_name: curso.name };
+          })
+        );
+        setHorarios(horariosConNombre);
+      } catch (error) {
+        console.error("Error al obtener horarios:", error);
+      }
     };
 
     const getCursos = async () => {
@@ -83,7 +95,14 @@ const Schedules = () => {
       );
     } else {
       await axios.post("http://localhost:5000/create_schedule", data);
-      setHorarios([...horarios, { ...data, id_schedule: uuidv4() }]);
+      const { data: curso } = await axios.post(
+        "http://localhost:5000/get_course",
+        { id_course: nuevoHorario.id_course }
+      );
+      setHorarios([
+        ...horarios,
+        { ...data, id_schedule: uuidv4(), course_name: curso.name },
+      ]);
     }
     handleClose();
   };
@@ -101,7 +120,9 @@ const Schedules = () => {
   };
 
   const handleEliminar = async (id_schedule) => {
-    await axios.delete("http://localhost:5000/delete_schedule", {data: {id_schedule} });
+    await axios.delete("http://localhost:5000/delete_schedule", {
+      data: { id_schedule },
+    });
     alert("Horario eliminado correctamente!");
     setHorarios((prev) => prev.filter((h) => h.id_schedule !== id_schedule));
   };
@@ -111,7 +132,12 @@ const Schedules = () => {
       <Typography variant="h4" gutterBottom>
         Gestión de Horarios
       </Typography>
-      <Button variant="contained" color="primary" onClick={handleOpen} sx={{ mb: 3 }}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleOpen}
+        sx={{ mb: 3 }}
+      >
         Crear Horario
       </Button>
 
@@ -121,7 +147,7 @@ const Schedules = () => {
             <Card sx={{ backgroundColor: "#f5f5f5", borderRadius: 2 }}>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  {horario.course}
+                  {horario.course_name}
                 </Typography>
                 <Typography color="textSecondary">
                   Inicio: {horario.datetime_start}
@@ -144,7 +170,9 @@ const Schedules = () => {
       </Grid>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{isEditing ? "Editar Horario" : "Crear Horario"}</DialogTitle>
+        <DialogTitle>
+          {isEditing ? "Editar Horario" : "Crear Horario"}
+        </DialogTitle>
         <DialogContent>
           <TextField
             select
@@ -184,7 +212,11 @@ const Schedules = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleCrearHorario} variant="contained" color="primary">
+          <Button
+            onClick={handleCrearHorario}
+            variant="contained"
+            color="primary"
+          >
             {isEditing ? "Actualizar" : "Crear"}
           </Button>
         </DialogActions>

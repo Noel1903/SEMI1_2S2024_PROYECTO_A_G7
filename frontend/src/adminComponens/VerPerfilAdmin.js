@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
-  Container, Box, Typography, Avatar, Button, 
-  IconButton, Dialog, DialogActions, DialogContent, 
+  Container, Box, Typography, Avatar, Button,
+  IconButton, Dialog, DialogActions, DialogContent,
   DialogTitle
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -13,6 +13,7 @@ const VerPerfilAdmin = () => {
   const [user, setUser] = useState(null); // Datos del usuario
   const [profileImg, setProfileImg] = useState(null); // Imagen cargada
   const [cameraOpen, setCameraOpen] = useState(false); // Control del diálogo de cámara
+  const [photoCounter, setPhotoCounter] = useState(1); // Contador para nombres únicos
   const videoRef = useRef(null);
   const navigate = useNavigate();
 
@@ -22,9 +23,9 @@ const VerPerfilAdmin = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/get_user",
-        { id_user: localStorage.getItem("id_user") }
-      );
+      const response = await axios.post("http://localhost:5000/get_user", {
+        id_user: localStorage.getItem("id_user"),
+      });
       setUser(response.data);
       setProfileImg(response.data.url_img); // Cargar la imagen de perfil existente
     } catch (error) {
@@ -34,20 +35,25 @@ const VerPerfilAdmin = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setProfileImg(URL.createObjectURL(file)); // Previsualización local de la imagen
-    uploadProfileImage(file);
+    if (file) {
+      setProfileImg(URL.createObjectURL(file)); // Previsualización local de la imagen
+      uploadProfileImage(file);
+    }
   };
 
-  const uploadProfileImage = async (file) => {
-    const form = new FormData();
-    form.append("profile_image", file);
+  const uploadProfileImage = async (image) => {
+    const formData = new FormData();
+    formData.append("id_user", localStorage.getItem("id_user"));
+    formData.append("image", image);
 
     try {
-      await axios.post("http://localhost:5000/upload_profile_image", form);
-      alert("Imagen de perfil actualizada!");
-      fetchUserProfile();
+      await axios.post("http://localhost:5000/create_rekognition", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      alert("Imagen enviada correctamente a Rekognition!");
+      fetchUserProfile(); // Recargar perfil tras actualización
     } catch (error) {
-      console.error("Error al subir imagen:", error);
+      console.error("Error al enviar imagen:", error);
     }
   };
 
@@ -57,18 +63,25 @@ const VerPerfilAdmin = () => {
     videoRef.current.srcObject = stream;
   };
 
+  // Tomar foto y generar nombre dinámico
   const takePhoto = () => {
     const canvas = document.createElement("canvas");
     const video = videoRef.current;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext("2d").drawImage(video, 0, 0);
+
     const imageData = canvas.toDataURL("image/png");
     setProfileImg(imageData); // Guardar la foto tomada
-    uploadProfileImage(dataURLtoFile(imageData, "photo.png"));
-    handleCloseCamera();
-  };
 
+    const filename = `photo${photoCounter}.png`; // Nombre único
+    const file = dataURLtoFile(imageData, filename);
+    uploadProfileImage(file); // Subir foto tomada
+
+    setPhotoCounter(photoCounter + 1); // Incrementar el contador
+    handleCloseCamera(); // Cerrar cámara
+  };
+  
   const dataURLtoFile = (dataurl, filename) => {
     const arr = dataurl.split(",");
     const mime = arr[0].match(/:(.*?);/)[1];

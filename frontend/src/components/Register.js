@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Box, TextField, Button, Typography, Container, Stack, Avatar } from "@mui/material";
+import { 
+  Box, TextField, Button, Typography, Container, Stack, Avatar 
+} from "@mui/material";
+import { Google as GoogleIcon } from "@mui/icons-material"; // Ícono de Google
 import axios from "axios";
 
 const Register = () => {
@@ -11,25 +14,20 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // Para redireccionar al login después del registro
+  const navigate = useNavigate();
 
-  // Manejar la carga de la imagen
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedImage(file);
-
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
+      reader.onloadend = () => setPreviewImage(reader.result);
       reader.readAsDataURL(file);
     }
   };
 
-  // Manejar el registro
   const handleRegister = async (e) => {
-    e.preventDefault(); // Evita el comportamiento por defecto del formulario
+    e.preventDefault();
     setLoading(true);
     setError("");
 
@@ -46,14 +44,64 @@ const Register = () => {
       });
 
       if (response.status === 200) {
-        alert("Registration successful!"); // Notificación
-        navigate("/login"); // Redirigir al login
+        alert("Registration successful!");
+        navigate("/login");
       }
     } catch (err) {
       setError("Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleRegister = async() => {
+    try{
+      const response = await axios.post("https://eg1oxolsnk.execute-api.us-east-1.amazonaws.com/produccion/registro_cognito",
+        {
+          email: email,
+          password: password,
+          username: username,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data.statusCode);
+      if (response.data.statusCode === 200) {
+        alert("Registro de usuario con cognito exitoso!");
+        const formData = new FormData();
+        formData.append("username", username);
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("role", "user");
+        if (selectedImage) formData.append("url_img", selectedImage);
+
+        const resp =await axios.post("http://localhost:5000/create_user", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        console.log(resp);
+        if (resp.status === 200) {
+          alert("Registro de usuario exitoso!");
+          navigate("/login");
+        } else {
+          setError("Registro fallido. Por favor, inténtelo de nuevo.");
+        }
+      } else {
+        if (response.data.message ===  "User already exists") {
+          setError("El correo ya está registrado.");
+        }else if (response.data.message === "Password did not conform with policy: Password not long enough"){
+          setError("La contraseña debe tener al menos 6 carácteres.");
+        }else{
+          setError("Registro fallido. Por favor, inténtelo de nuevo.");
+        }
+      }
+    } catch (error) {
+      console.error("Error en registro con cognito:", error);
+      setError("Registro fallido. Por favor, inténtelo de nuevo.");
+    }
+  
   };
 
   return (
@@ -109,14 +157,30 @@ const Register = () => {
               </Box>
             )}
 
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
+            <Button 
+              type="submit" 
+              variant="contained" 
+              color="primary" 
+              fullWidth 
               disabled={loading}
             >
               {loading ? "Registering..." : "Register"}
+            </Button>
+
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<GoogleIcon />}
+              onClick={handleGoogleRegister}
+              sx={{
+                backgroundColor: "#4285F4",
+                color: "#fff",
+                "&:hover": {
+                  backgroundColor: "#357ae8",
+                },
+              }}
+            >
+              Registrarse con Cognito
             </Button>
 
             {error && (
@@ -125,6 +189,7 @@ const Register = () => {
               </Typography>
             )}
           </Stack>
+
           <Typography variant="body2" sx={{ mt: 2 }}>
             Already have an account?{" "}
             <Link to="/" style={{ textDecoration: "none" }}>

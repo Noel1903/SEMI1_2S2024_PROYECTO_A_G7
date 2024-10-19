@@ -16,7 +16,6 @@ const Functions = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadMessage, setUploadMessage] = useState('');
   const [documentPath, setDocumentPath] = useState('');
-
   const [translateText, setTranslateText] = useState('');
   const [textractResult, setTextractResult] = useState('');
   const [pollyResponse, setPollyResponse] = useState('');
@@ -56,15 +55,13 @@ const Functions = () => {
         { document: documentPath },
         { headers: { 'Content-Type': 'application/json' } }
       );
-      console.log(response.data.translations);
-      const translations = response.data.translations; // Objeto de traducciones
+      const translations = response.data.translations;
 
       // Formatear las traducciones
       const formattedTranslations = Object.entries(translations)
         .map(([lang, text]) => `${lang.toUpperCase()}: ${text}`)
         .join('\n\n');
 
-      console.log(formattedTranslations);
       setTranslateText(`Original:\n${response.data.original}\n\nTraducciones:\n${formattedTranslations}`);
     } catch (error) {
       console.error('Error en Translate:', error);
@@ -78,22 +75,25 @@ const Functions = () => {
         'https://de0qqod87e.execute-api.us-east-2.amazonaws.com/Prod/get_textract',
         { document: documentPath }
       );
-      console.log(response.data);
       setTextractResult(response.data.Textract);
     } catch (error) {
       console.error('Error en Textract:', error);
     }
   };
 
-  // Consumir función de Polly
+  // Consumir función de Polly con base64
   const handlePolly = async () => {
     try {
       const response = await axios.post(
         'https://de0qqod87e.execute-api.us-east-2.amazonaws.com/Prod/get_polly',
         { document: documentPath }
       );
-      console.log(response.data.audio);
-      setPollyResponse(response.data.audio);
+
+      // Aquí asumimos que response.data.audio es un string en base64
+      const audioBase64 = response.data.audio;
+      console.log(audioBase64);
+      const audioSrc = `data:audio/mpeg;base64,${audioBase64}`;
+      setPollyResponse(audioSrc);
     } catch (error) {
       console.error('Error en Polly:', error);
     }
@@ -127,12 +127,7 @@ const Functions = () => {
           <Card>
             <CardContent>
               <Typography variant="h6">Función Translate</Typography>
-              <Button
-                variant="contained"
-                color="success"
-                onClick={handleTranslate}
-                sx={{ mt: 2 }}
-              >
+              <Button variant="contained" color="success" onClick={handleTranslate} sx={{ mt: 2 }}>
                 Traducir
               </Button>
               <TextField
@@ -154,12 +149,7 @@ const Functions = () => {
           <Card>
             <CardContent>
               <Typography variant="h6">Función Textract</Typography>
-              <Button
-                variant="contained"
-                color="warning"
-                onClick={handleTextract}
-                sx={{ mt: 2 }}
-              >
+              <Button variant="contained" color="warning" onClick={handleTextract} sx={{ mt: 2 }}>
                 Extraer Texto
               </Button>
               <TextField
@@ -181,12 +171,7 @@ const Functions = () => {
           <Card>
             <CardContent>
               <Typography variant="h6">Función Polly</Typography>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handlePolly}
-                sx={{ mt: 2 }}
-              >
+              <Button variant="contained" color="secondary" onClick={handlePolly} sx={{ mt: 2 }}>
                 Generar Audio
               </Button>
               {pollyResponse && (

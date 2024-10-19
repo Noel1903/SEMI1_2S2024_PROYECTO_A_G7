@@ -37,6 +37,7 @@ app.add_url_rule('/create_course', 'create_course', create_course, methods=['POS
 app.add_url_rule('/get_all_courses', 'get_courses', get_courses, methods=['GET'])
 app.add_url_rule('/update_course', 'update_course', update_course, methods=['PUT'])
 app.add_url_rule('/delete_course', 'delete_course', delete_course, methods=['DELETE'])
+app.add_url_rule('/get_course', 'get_course', get_course, methods=['POST'])
 
 ###########Rutas de Recordatorios
 app.add_url_rule('/create_reminder', 'create_reminder', create_reminder, methods=['POST'])
