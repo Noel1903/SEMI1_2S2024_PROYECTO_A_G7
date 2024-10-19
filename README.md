@@ -1,449 +1,179 @@
 # SEMI1_2S2024_PROYECTO_A_G7
 
-# ***CURSO***
-## Crear Curso
-## POST:localhost:5000/create_course
 
-```javascript
-// request
-{
-    "name":"Nombre Curso",
-    "credits":10, //Creditos que da el curso
-    "start_time":07:10:00, //hh:mm:ss
-    "end_time":08:50:00
-}
+## Descripcion del Proyecto
 
-// response
+El proyecto es una aplicación web moderna que utiliza una infraestructura distribuida basada en Amazon Web Services (AWS). El frontend está desarrollado en React y desplegado en un bucket de S3, lo que proporciona una distribución eficiente y escalable de los archivos estáticos. La aplicación está soportada por dos backends: uno construido en Node.js con Express y otro en Python con Flask, ambos desplegados en una instancia de Amazon EC2. Para garantizar un rendimiento óptimo y alta disponibilidad, se emplea un Load Balancer que distribuye el tráfico del frontend de manera equitativa entre los dos backends.
 
-//exito
-{
-    "name":"Nombre Curso",
-    "credits":10, //Creditos que da el curso
-    "start_time":07:10:00, //hh:mm:ss
-    "end_time":08:50:00
-}
+El almacenamiento y gestión de datos se realizan en una base de datos MySQL alojada en Amazon RDS, proporcionando durabilidad y alta disponibilidad para la información importante. Los archivos estáticos también se almacenan de manera segura en un bucket de S3.
 
-//error
-{
-    "error":"Error al crear curso"
-}
+Además, el proyecto utiliza varios servicios avanzados de AWS para agregar funcionalidades clave:
 
-```
+- Amazon Polly: Convierte archivos almacenados en S3 en audio, permitiendo la conversión de texto a voz.
+
+- Amazon Textract: Extrae texto de documentos almacenados en S3 para su procesamiento y análisis.
+
+- Amazon Translate: Traduce textos y archivos almacenados en S3, facilitando la accesibilidad multilingüe.
+
+- Amazon Rekognition: Proporciona capacidades de reconocimiento facial y análisis de imágenes.
+
+- Amazon Cognito: Gestiona y valida cuentas de usuario, incluyendo la verificación de correos electrónicos.
+
+Estos servicios son consumidos por medio de funciones Lambda escritas en Python, integradas con API Gateway, lo que permite la exposición de endpoints RESTful para la comunicación entre servicios y la automatización de procesos clave dentro del sistema.
+
+## Tecnologias Utilizadas en el Desarrollo
+
+- **Lenguajes de Programacion**
+    - NodeJS
+    - Python
+
+- **Sevicios AWS**
+    - Usuarios IAM
+    - Bucket S3
+    - Amazon Ec2
+    - Load Balancer
+    - Amazon RDS
+    - Funciones Lambda
+    - Api Gateway
+    - Amazon Polly
+    - Amazon Textract
+    - Amazon Translate
+    - Amazon Rekognition
+    - Amazon Cognito
+- **Base de Datos**
+    - Mysql
+
+- **Herramientas**
+    - Visual Studio Code: Edición de Código
+    - Mysql Workbench: Administración de Base de Datos
+    - Termius: Conexión remota a servidores mediante SSH
+    - Github: Servidor de Versionamiento
+    - GitKracken: Administración del Versionamiento
 
 
-## Obtener Curso
-## POST:localhost:5000/get_course
+## Arquitectura
 
-```javascript
-// request
-{
-    "id_course":1
-}
+La arquitectura de la aplicación está basada en servicios REST.
 
-// response
+![Arquitectura Proyecto](img/ArquitecturaSemi1.jpg)
 
-//exito
-{
-    "name":"Quimica",
-    "credits":11, // nuevos creditos del curso
-    "start_time":04:30:00, //hh:mm:ss nuevo horario inicio
-    "end_time":06:10:00 //nuevo horario fin
-}
-//error
-{
-    "error":"Error al obtener curso + error"
-}
 
-```
+## Flujo de Ejecucion
 
-## Obtener todos los curso de usuario
-## POST:localhost:5000/get_all_courses
 
-```javascript
-// response
-//exito
-[
-    {
-        "name":"Quimica",
-        "credits":11, // nuevos creditos del curso
-        "start_time":04:30:00, //hh:mm:ss nuevo horario inicio
-        "end_time":06:10:00 //nuevo horario fin
-    },
-    {
-        "name":"Matematica",
-        "credits":10, // nuevos creditos del curso
-        "start_time":04:30:00, //hh:mm:ss nuevo horario inicio
-        "end_time":06:10:00 //nuevo horario fin
-    }
-]
-
-// error
-{
-    "error":"Error al obtener todos los cursos + error"
-}
-
-```
-
-## Modificar Curso
-## POST:localhost:5000/update_course
-
-```javascript
-// request
-{
-    "id_course" :1 ,
-    "name":"nuevo nombre Curso",
-    "credits":11, //Creditos que da el curso
-    "start_time":04:30:00, //hh:mm:ss
-    "end_time":06:10:00
-}
-
-// response
-//exito
-{
-    "name":"nuevo nombre Curso",
-    "credits":11, // nuevos creditos del curso
-    "start_time":04:30:00, //hh:mm:ss nuevo horario inicio
-    "end_time":06:10:00 //nuevo horario fin
-}
-
-// error
-{
-    "error":"Error al modificar curso + error"
-}
-
-```
-
-## Eliminar Curso
-## POST:localhost:5000/delete_course
-
-```javascript
-// request
-{
-    "id_course":1
-}
-
-// response
-//exito
-{
-   "message":"Curso Eliminado Correctamente"
-}
-
-//error
-{
-    "error":"Error al eliminar el curso"
-}
-```
----
-
-# ***Recordatorios - Reminders***
-## Crear Recordatorio
-## POST:localhost:5000/create_reminder
-
-```javascript
-// request
-{
-    "name":"nombre del recordatorio",
-    "description": "Descripción del recordatorio",
-    "date":"2024-10-05",
-    "hour":"10:00",
-    "id_user":1
-}
-
-// response
-//exito
-{
-   "message":"Recordatorio creado Correctamente"
-}
-
-//error
-{
-    "error":"Error al crear el recordatorio"
-}
-```
-
-## Modificar Recordatorio
-## PUT:localhost:5000/modify_reminder
-
-```javascript
-// request
-{
-    "id_reminder":1,
-    "name":"nombre del recordatorio",
-    "description": "Descripción del recordatorio",
-    "date":"2024-10-05",
-    "hour":"10:00",
-    "id_user":1
-}
-
-// response
-//exito
-{
-   "message":"Recordatorio modificado Correctamente"
-}
-
-//error
-{
-    "error":"Error al modificar el recordatorio"
-}
-```
-
-## Eliminar Recordatorio
-## DELETE:localhost:5000/delete_reminder
-
-```javascript
-// request
-{
-    "id_reminder":1
-}
-
-// response
-//exito
-{
-   "message":"Recordatorio eliminado Correctamente"
-}
-
-//error
-{
-    "error":"Error al eliminar el recordatorio"
-}
+```mermaid
+    graph LR
+        usuario <--> Frontend
+        Frontend <--> Balanceador_de_Carga
+        Frontend <--> Api_Gateway
+        Balanceador_de_Carga <--> Backend
+        Backend <--> Base_de_Datos
+        Backend <--> Datos_Estaticos
+        Api_Gateway <--> Servicios
+        Servicios <--> Datos_Estaticos
+ 
 ```
 
 
 
-## Obtener Recordatorio por usuarios
-## POST:localhost:5000/get_reminders_user
-
-```javascript
-// request
-{
-    "id_user":1
-}
-
-// response
-//exito
-{
-   [
-    {
-        "id_reminder":1,
-        "name":"nombre del recordatorio",
-        "description": "Descripción del recordatorio",
-        "date":"2024-10-05",
-        "hour":"10:00",
-        "id_user":1
-    },
-    ...
-   ]
-}
-
-//error
-{
-    "error":"Error al obtener los recordatorios"
-}
-```
----
-
-# ***Tareas - Tasks***
-## Crear Tarea
-## POST:localhost:5000/create_task
-
-```javascript
-// request
-{
-    "id_task": 12,
-    "name":"nombre de la tarea",
-    "description": "Descripción de la tarea",
-    "date":"2024-10-05",
-    "hour":"10:00",
-    "id_course": 10
-}
-
-// response
-//exito
-{
-   "message":"Tarea creada correctamente"
-}
-
-//error
-{
-    "error":"Error al crear la tarea"
-}
-```
-
-## Modificar Task
-## PUT:localhost:5000/modify_task
-
-```javascript
-// request
-{
-    "id_task": 12,
-    "name":"nombre de la tarea",
-    "description": "Descripción de la tarea",
-    "date":"2024-10-05",
-    "hour":"10:00",
-    "id_course": 13
-}
-
-// response
-//exito
-{
-   "message":"Recordatorio modificado Correctamente"
-}
-
-//error
-{
-    "error":"Error al modificar el recordatorio"
-}
-```
-
-## Eliminar Task
-## DELETE:localhost:5000/delete_task
-
-```javascript
-// request
-{
-    "id_task": 32
-}
-
-// response
-//exito
-{
-   "message":"Tarea eliminada correctamente"
-}
-
-//error
-{
-    "error":"Error al eliminar la tarea",
-    "id_task eliminado" :32
-}
-```
+## Ejecucion 
 
 
-# Notificaciones 
+Para Ejecutar la aplicacion: 
 
-## GET: localhost:5000/get_notification_user
+1. Encender los servidores EC2 y validar el direccionamiento load balancer
 
-
-```javascript
-// request
-{
-    "id_user": 1
-}
-
-// response
-//exito
-{
-   [
-    {
-        "id_notification":1,
-        "message": "mensaje",
-        "type":"Reminder",
-        "datetime_notification":"2024-10-15",
-        "id_user": 1
-    }, . . .
-   ]
-}
-
-//error
-{
-    "error":"No  existe el id_user"
-}
-```
-
-## GET: localhost:5000/get_notifications
+2. Para levantar el Frontend se debera instalar las dependencias y ejecutar el codigo con los siguientes comandos
+    ``` c
+	npm install
+    npm start
+	```
+3. Para levantar el Backend de Python debera instalar las dependencias y ejecutar el codigo.
+    ``` c
+	pip install -r requirements.txt
+    python run.py
+	```
+4. Para levantar el Backend de NodeJs se debera instalar las dependencias y ejecutar el codigo con los siguientes comandos
+    ``` c
+	npm install
+    npm start
+	```
+> Nota: Ambos servidores de backens de ejecutan en el puerto 5000 y el frontend en el puerto 3000
 
 
-```javascript
+## Endpoints y Servicios
 
-// response
-//exito
-{
-   [
-    {
-        "id_notification":1,
-        "message": "mensaje",
-        "type":"Reminder",
-        "datetime_notification":"2024-10-15",
-        "id_user": 1
-    }, . . .
-   ]
-}
-
-//error
-{
-    "error":"No hay notificaciones"
-}
-```
+Para el Despliegue de la aplicacion se utilizo aws y se utilizaron los siguientes endpoints, funciones lambda y servicios
 
 
-# Subida de tareas
-## POST: localhost:5000/upload_task
+| Tipo | Metodo |Despliegue |Endpoint |Uso |
+| ------ | ------ | ------ | ------ | ------ |
+| Edpoint | POST | Backend | /login_user  | Logueo de Usuario |
+| Edpoint | POST | Backend | /get_user  | Obtenención de Usuario |
+| Edpoint | POST | Backend | /create_user  | Creación de Usuario |
+| Edpoint | PUT | Backend | /update_user  | Modificación de Usuario |
+| Edpoint | DELETE | Backend | /delete_user  | Eliminación de Usuario |
+| Edpoint | GET | Backend | /get_users  | Obtención de todos los Usuarios |
+| Edpoint | POST | Backend | /create_rekognition  | Guardar imagen Facial |
+| Edpoint | POST | Backend | /get_rekognition  | Comparar imagenes Faciales |
+| Edpoint | POST | Backend | /create_course  | Crear Curso |
+| Edpoint | GET | Backend | /get_all_courses  | Obtener todos los Cursos |
+| Edpoint | PUT | Backend | /update_course  | Actualizar Curso |
+| Edpoint | DELETE | Backend | /delete_course  | Eliminar Curso |
+| Edpoint | POST | Backend | /create_reminder  | Crear Recordatorio |
+| Edpoint | PUT | Backend | /modify_reminder  | Modificar Recordatorio |
+| Edpoint | DELETE | Backend | /delete_reminder  | Eliminar Recordatorio |
+| Edpoint | POST | Backend | /get_reminders_user  | Obtener Recordatorio por Usuario |
+| Edpoint | POST | Backend | /create_schedule  | Crear Horario |
+| Edpoint | GET | Backend | /get_schedules  | Obtener Horarios |
+| Edpoint | POST | Backend | /get_schedule  | Obtener Horarios por id |
+| Edpoint | POST | Backend | /get_schedules_by_user  | Obtener Horarios de Usuario |
+| Edpoint | PUT | Backend | /update_schedule  | Modificar Horario |
+| Edpoint | DELETE | Backend | /delete_schedule  | Eliminar Horario |
+| Edpoint | POST | Backend | /get_notifications_user  | Obtener Notificaciones de Usuario |
+| Edpoint | GET | Backend | /get_notifications  | Obtener Notificaciones |
+| Servicio | POST | Lambda | /cognito  | Utilizar Servicio Cognito |
+| Servicio | POST | Lambda | /get_polly  | Utilizar Servicio Polly|
+| Servicio | POST | Lambda | /get_rekognition  | Utilizar Servicio Rekognition |
+| Servicio | POST | Lambda | /get_textract  | Utilizar Servicio Textract |
+| Servicio | POST | Lambda | /get_traslate  | Utilizar Servicio Traslate |
+
+## Base de Datos
+
+Se utilizo una base de datos Relacional alojada en Amazon RDS e instanciada en Mysql, el Modelo Entidad Relacion es el siguiente:
+
+![Modelo ER](img/ER_db_semi1_proyecto.png)
 
 
-```javascript
+## Anexos de Servicios AWS
 
-//json
-{
-    "url_file":"formdata_file",
-    "id_user":1,
-    "id_task":1
-}
+1. Bucket S3
 
-// response
-//exito
-{
-   "msg":"Tarea subida correctamente"
-}
+    ![Bucket S3](img/BucketS3.png)
 
-//error
-{
-    "error":"No se subió la tarea"
-}
-```
+2. RDS
 
+    ![RDS](img/RDS.png)
 
+3. Api Gateway
 
-# Reconocimiento facial
+    ![Api Gateway](img/apiGateway.png)
 
-## POST: localhost:5000/create_rekognition
-```javascript
+4. Lambda
 
-//json
-{
-    "id_user":1,
-    "image":"formData"
-}
+    ![Lambda](img/Lambda.png)
 
-// response
-//exito
-{
-   "msg":"Imagen subida correctamente"
-}
+5. Ec2
 
-//error
-{
-    "error":"No se subió la imagen"
-}
-```
+    ![Ec2](img/ec2.png)
 
-## POST: localhost:5000/get_rekognition
-```javascript
+6. **Usuarios IAM**
 
-//json
-{
-    "image":"formData"
-}
+| Usuario | Servicios que administra |
+| ------ | ------ | 
+| adminEC2 | EC2 y LoadBalancer | 
+| adminBucketS3 | Buckets S3 | 
+| Usuario2 | ApiGateway y Funciones Lambda | 
+| Admin_BD | Almacenamiento RDS | 
 
-// response
-//exito
-{
-    'message': 'Reconocimiento facial exitoso',
-    'matched_image': s3_image_key,
-    'similarity': similarity,
-    'id_user': id_user
-}
-
-//error
-{
-    "error":"No se encontro usuario"
-}
-```
+>Nota: Para el funcionamiento de la aplicacion todos los servicios deben estar levantados y ejecutados correctamente en AWS.
