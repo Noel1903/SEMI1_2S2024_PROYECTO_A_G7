@@ -14,6 +14,7 @@ import CreateTasks from "./adminComponens/CreateTasks";
 import UsersAdmin from "./adminComponens/UsersAdmin";
 import VerPerfilAdmin from "./adminComponens/VerPerfilAdmin";
 import Perfil from "./components/Perfil";
+import Functions from "./components/Functions";
 import { ThemeProvider } from "@mui/material/styles";
 
 import theme from "./theme";
@@ -49,6 +50,7 @@ function Layout() {
         <Route path="/usersAdmin" element={<UsersAdmin />} />
         <Route path="/perfilAdmin" element={<VerPerfilAdmin />} />
         <Route path="/perfil" element={<Perfil />} />
+        <Route path="/functions" element={<Functions />} />
       </Routes>
     </>
   );

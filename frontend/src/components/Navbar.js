@@ -61,6 +61,9 @@ const Navbar = () => {
         <Button color="inherit" component={Link} to="/tasks">
           Tareas
         </Button>
+        <Button color="inherit" component={Link} to="/functions">
+          Funciones
+        </Button>
 
         {/* Notificaciones con contador */}
         <IconButton color="inherit" onClick={handleMenuClick}>
