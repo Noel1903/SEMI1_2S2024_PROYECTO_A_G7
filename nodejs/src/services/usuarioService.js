@@ -373,8 +373,8 @@ exports.loginUsuarioService = async function(loginUsuario){
           let esCorrectoPass = await CompararPass(password,passEncriptado);
           
           if(esCorrectoPass){
-               sqlComandSuccess = `SELECT u.id_user FROM users u WHERE u.password =  "${passEncriptado}";`
-               const[resultLogSuccess,fieldsLogSuccess] = await conexion.query(sqlComandSuccess);
+               sqlComandSuccess = `SELECT u.id_user,u.role FROM users u WHERE u.password =  "${passEncriptado}";`
+               const[resultLogSuccess] = await conexion.query(sqlComandSuccess);
                
                return {status:200,data:resultLogSuccess[0]};
 
