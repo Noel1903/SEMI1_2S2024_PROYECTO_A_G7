@@ -1,4 +1,28 @@
 # SEMI1_2S2024_PROYECTO_A_G7
+## Objetivos del proyecto:
+
+
+1. **Facilitar la Gestión del Tiempo**:
+   - Desarrollar una interfaz intuitiva que permita a los estudiantes organizar sus horarios de clases, tareas y actividades extracurriculares de manera eficiente.
+
+2. **Implementar Recordatorios**:
+   - Crear un sistema de recordatorios que envíe notificaciones oportunas a los estudiantes sobre entregas de tareas
+   y recordatorios establecidos por ellos mismos.
+
+3. **Centralizar la Información de Cursos**:
+   - Proporcionar un espacio donde los estudiantes puedan acceder a la información de sus cursos, incluyendo materiales de estudio, y fechas importantes, facilitando el seguimiento de su progreso académico.
+
+4. **Organización de Tareas y Proyectos**:
+   - Permitir a los estudiantes crear, organizar y priorizar sus tareas y proyectos en función de su urgencia y relevancia, ayudándoles a mantenerse enfocados en sus objetivos académicos.
+
+5. **Analizar el Rendimiento Académico**:
+   - Implementar funciones de análisis que permitan a los estudiantes revisar su desempeño en tareas, identificando áreas de mejora y estableciendo metas realistas.
+
+6. **Accesibilidad y Usabilidad**:
+   - Diseñar una plataforma accesible que funcione en múltiples dispositivos, garantizando que todos los estudiantes puedan utilizar la aplicación sin barreras tecnológicas.
+
+7. **Integración con Otras Herramientas Educativas**:
+   - Facilitar la integración con otras plataformas educativas y herramientas de gestión de aprendizaje, permitiendo a los estudiantes sincronizar su trabajo y datos en un solo lugar.
 
 
 ## Descripcion del Proyecto
@@ -177,3 +201,91 @@ Se utilizo una base de datos Relacional alojada en Amazon RDS e instanciada en M
 | Admin_BD | Almacenamiento RDS | 
 
 >Nota: Para el funcionamiento de la aplicacion todos los servicios deben estar levantados y ejecutados correctamente en AWS.
+
+
+
+# Presupuesto del Proyecto: Plataforma de Gestión para Estudiantes
+
+## Resumen del Proyecto
+La plataforma de gestión para estudiantes tiene como objetivo facilitar la organización de horarios, recordatorios, cursos y tareas. La aplicación está basada en una infraestructura distribuida utilizando Amazon Web Services (AWS) y tecnologías modernas como React, Node.js y Python.
+
+## Presupuesto Detallado
+
+### 1. **Costos de Desarrollo Inicial**
+| Concepto                       | Descripción                                            | Costo Estimado | Tiempo Estimado |
+|--------------------------------|--------------------------------------------------------|----------------|------------------|
+| **Frontend**                   | Desarrollo en React y diseño UI/UX                    | Q5,000         | 2 semanas        |
+| **Backend (Node.js)**          | Desarrollo de API y lógica de negocio                  | Q4,000         | 3 semanas        |
+| **Backend (Python/Flask)**     | Desarrollo de API y lógica de negocio                  | Q4,000         | 3 semanas        |
+| **Base de Datos (MySQL)**      | Configuración y diseño de base de datos                | Q2,000         | 1 semanas        |
+| **Integración AWS**            | Configuración de servicios como S3, RDS, Lambda       | Q3,000         | 1 semanas        |
+| **Pruebas y QA**               | Realización de pruebas unitarias y de integración      | Q2,000         | 2 semanas        |
+| **Documentación**              | Creación de documentación técnica y de usuario         | Q1,000         | 1 semana         |
+| **Total Desarrollo Inicial**    |                                                        | **Q21,000**    | **13 semanas**   |
+
+### 2. **Costos de Infraestructura AWS**
+| Servicio                 | Descripción                                        | Costo Mensual Estimado |
+|-------------------------|----------------------------------------------------|------------------------|
+| **Amazon EC2**          | Servidores virtuales para backend                  | Q150                   |
+| **Amazon S3**          | Almacenamiento de archivos estáticos                | Q50                    |
+| **Amazon RDS**         | Base de datos relacional                             | Q100                   |
+| **Amazon Lambda**      | Funciones serverless para procesamiento             | Q30                    |
+| **API Gateway**        | Gestión de APIs y control de acceso                 | Q20                    |
+| **Total Infraestructura AWS** |                                           | **Q350**               |
+
+### 3. **Costos Operativos**
+| Concepto                        | Descripción                                          | Costo Mensual Estimado |
+|---------------------------------|-----------------------------------------------------|------------------------|
+| **Mantenimiento de Software**    | Actualizaciones y corrección de errores              | Q500                   |
+| **Soporte Técnico**              | Atención al usuario y solución de problemas          | Q300                   |
+| **Marketing y Promoción**        | Estrategias de marketing para atraer usuarios        | Q400                   |
+| **Total Costos Operativos**      |                                                    | **Q1,200**             |
+
+### 4. **Mejoras Futuras (Propuestas)**
+| Mejora                       | Descripción                                           | Costo Estimado | Tiempo Estimado |
+|-----------------------------|-------------------------------------------------------|----------------|------------------|
+| **Funcionalidad Multilingüe**| Implementación de traducción automática para la plataforma | Q2,000         | 1 semanas        |
+| **Integración con otras herramientas**| Sincronización con plataformas educativas y de aprendizaje | Q3,000         | 2 semanas        |
+| **Análisis de Rendimiento Académico**| Implementación de un sistema de análisis de datos      | Q2,500         | 2 semanas        |
+| **Total Mejoras Futuras**   |                                                       | **Q7,500**     | **5 semanas**   |
+
+## Resumen Total
+- **Costo Total de Desarrollo Inicial:** Q21,000
+- **Costo Mensual de Infraestructura AWS:** Q350
+- **Costo Mensual de Operaciones:** Q1,200
+- **Costo Estimado para Mejoras Futuras:** Q7,500
+
+### Tiempo Total Estimado para Desarrollo Inicial: 13 semanas
+### Tiempo Estimado para Mejoras Futuras: 5 semanas
+
+## Funciones Lambda Utilizadas
+
+### 1. Función **Textract**
+AWS Textract es un servicio que permite extraer texto, formularios y tablas de documentos escaneados de manera automática. Utiliza aprendizaje automático para identificar y extraer información estructurada y no estructurada.
+
+#### Utilidad en un programa para estudiantes:
+- **Subida de documentos**: Los estudiantes pueden cargar documentos como trabajos, ensayos o formularios. Textract puede procesar estos documentos y extraer texto relevante, facilitando su revisión y análisis.
+- **Análisis de formularios**: En el caso de formularios de inscripción, Textract puede extraer automáticamente información como nombres, fechas y otros datos necesarios, reduciendo el esfuerzo manual.
+- **Búsqueda y recuperación de información**: Con el texto extraído, se pueden implementar funciones de búsqueda en un portal de estudiantes, permitiendo que encuentren información específica en documentos de manera rápida y eficiente.
+
+### 2. Función **Translate**
+AWS Translate es un servicio de traducción automática que permite traducir texto en múltiples idiomas.
+
+#### Utilidad en un programa para estudiantes:
+- **Accesibilidad**: Permite a los estudiantes de diferentes orígenes lingüísticos acceder a materiales de estudio en su idioma preferido, promoviendo la inclusión y la diversidad.
+- **Mejora del aprendizaje**: Los estudiantes pueden traducir textos académicos, ayudándoles a entender mejor conceptos complejos en su lengua materna.
+
+### 3. Función **Cognito**
+Amazon Cognito es un servicio que facilita la autenticación de usuarios y la gestión de identidades. Permite a los desarrolladores agregar registro, inicio de sesión y control de acceso a sus aplicaciones.
+
+#### Utilidad en un programa para estudiantes:
+- **Gestión de usuarios**: Facilita la creación de cuentas para estudiantes y la gestión de su información personal y preferencias, proporcionando un acceso seguro a la plataforma.
+- **Sincronización de datos**: Permite a los estudiantes acceder a sus datos desde diferentes dispositivos, mejorando la experiencia del usuario.
+
+### 4. Función **Polly**
+AWS Polly es un servicio de conversión de texto a voz que permite generar audio realista a partir de texto escrito.
+
+#### Utilidad en un programa para estudiantes:
+- **Aprendizaje inclusivo**: Puede ser utilizado para leer en voz alta materiales de estudio, ayudando a estudiantes con discapacidades visuales o dificultades de lectura.
+- **Práctica de idiomas**: Los estudiantes pueden escuchar textos en diferentes idiomas, mejorando su pronunciación y comprensión oral.
+
