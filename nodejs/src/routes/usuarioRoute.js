@@ -10,7 +10,8 @@ const upload = multer({ storage: storage });
 const {
     holaUsuarioController,
     registrarUsuarioController, 
-    obtenerUsuarioController, 
+    obtenerUsuarioController,
+    obtenerTodoUsuarioController, 
     modificarUsuarioController, 
     eliminarUsuarioController,
     loginUsuarioController,
@@ -20,6 +21,7 @@ const {
 
 // Rutas para usuarios
 router.post('/get_user',obtenerUsuarioController); //para obtener los datos del  usuario
+router.get('/get_users',obtenerTodoUsuarioController); //para obtener todos los usuarios
 router.post('/login_user', loginUsuarioController); // login
 router.post('/create_user', upload.single('url_img'), registrarUsuarioController);// para crear un usuario
 
@@ -28,8 +30,8 @@ router.put('/update_user', upload.single('url_img'),modificarUsuarioController);
 router.delete('/delete_user', eliminarUsuarioController); //borrar uno de los usaruios
 
 //Ruta Reconocimiento facial
-router.post('/upload_rekog',upload.single('image'),crearFacialUsuarioController); // login
-router.post('/validate_rek',upload.single('image'),loginUsuarioFaceController); // login
+router.post('/create_rekognition',upload.single('image'),crearFacialUsuarioController); // login
+router.post('/get_rekognition',upload.single('image'),loginUsuarioFaceController); // login
 
 router.get('/', holaUsuarioController); //saludos usuarios
 

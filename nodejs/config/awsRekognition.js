@@ -12,4 +12,5 @@ dotenv.config({path: '../.env'});
         }
         
     });
+
 module.exports = {rekognition};

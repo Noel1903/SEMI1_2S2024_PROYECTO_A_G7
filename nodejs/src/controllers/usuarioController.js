@@ -1,5 +1,6 @@
 const {registrarUsuarioService, 
-    obtenerUsuarioService, 
+    obtenerUsuarioService,
+    obtenerTodoUsuarioService, 
     modificarUsuarioService, 
     eliminarUsuarioService, 
     holaUsuarioService, 
@@ -35,14 +36,12 @@ exports.registrarUsuarioController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al generar registrar usuario!!!","errorUsuario":err.message});
-            console.log("Aqui ennntroooooooooooooooooooo jaaja");
-            console.log(err);
-            return   res.status(500).json(err.message);
+            return   res.status(500).json(err);
         }
     )
 
 };
-
+// controller para obtener un solo usuario
 exports.obtenerUsuarioController = async (req, res) => {
     // Implementación para obtener un usuario por ID
     // en param tenia req.query --> req.body
@@ -57,7 +56,27 @@ exports.obtenerUsuarioController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al obtener usuario!!!","errorUsuario":err.message});
-            return res.json({"mensaje":err.message});
+            return res.json({"mensaje":err});
+        }
+    )
+};
+
+// controllor para obtener todos los usuarios
+exports.obtenerTodoUsuarioController = async (req, res) => {
+    // Implementación para obtener un usuario por ID
+    // en param tenia req.query --> req.body
+    obtenerTodoUsuarioService()
+    .then((result)=>{
+        //return   res.status(200).json({"status":200,"mensaje":"Datos de usuario obtenido exitosamente","datosUsuario":result});
+        const {status,data} = result;
+        return  res.status(status).json(data);
+    }
+        
+    )
+    .catch(
+        (err)=>{
+            //return   res.status(400).json({"status":400,"mensaje":"Error,al obtener usuario!!!","errorUsuario":err.message});
+            return res.json({"mensaje":err});
         }
     )
 };
@@ -77,7 +96,7 @@ exports.modificarUsuarioController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al modificar usuario!!!","errorUsuario":err.message});
-            return   res.json(err.message);
+            return   res.json(err);
             
         }
     )
@@ -126,6 +145,7 @@ exports.loginUsuarioFaceController = async (req, res) => {
     loginUsuarioFaceService(req)
     .then((result)=>{
         //return   res.status(200).json({"status":200,"mensaje":"Datos de usuario obtenido exitosamente","datosUsuario":result});
+        
         const {status,data} = result;
         return  res.status(status).json(data);
     }
@@ -134,7 +154,7 @@ exports.loginUsuarioFaceController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al obtener usuario!!!","errorUsuario":err.message});
-            return res.status(500).json({mensaje:err});
+            return res.status(500).json({error:`Error en servidor ${err}`});
         }
     )
 };
@@ -153,7 +173,7 @@ exports.crearFacialUsuarioController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al generar registrar usuario!!!","errorUsuario":err.message});
-            return res.json(err.message);
+            return res.json(err);
         }
     )
 

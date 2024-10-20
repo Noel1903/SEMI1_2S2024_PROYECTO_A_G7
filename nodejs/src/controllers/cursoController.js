@@ -1,6 +1,7 @@
 const {
     crearCursoService,  
     obtenerCursoService,
+    obtenerTodoCursoService,
     obtenerTodoCursoUsuarioService,
     modificarCursoService,  
     eliminarCursoService,  
@@ -29,7 +30,7 @@ exports.crearCursoController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al generar playlist!!!","errorPlaylist":err.message});
-            return  res.json(err.message);
+            return  res.json(err);
         }
     )
 
@@ -48,7 +49,26 @@ exports.obtenerCursoController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al obtener todas las playlist!!!","errorPlaylist":err.message});
-            return   res.json(err.message);
+            return   res.json(err);
+        }
+    )
+};
+
+
+exports.obtenerTodoCursoController = async (req, res) => {
+    // Implementación para obtener un usuario por ID
+    obtenerTodoCursoService()
+    .then((result)=>{
+        //return   res.status(200).json({"status":200,"mensaje":"Lista de playlist obtenida exitosamente","datosPlaylist":result});
+        const {status,data} = result;
+        return   res.status(status).json(data);
+    }
+        
+    )
+    .catch(
+        (err)=>{
+            //return   res.status(400).json({"status":400,"mensaje":"Error,al obtener todas las playlist!!!","errorPlaylist":err.message});
+            return   res.json(err);
         }
     )
 };
@@ -66,7 +86,7 @@ exports.obtenerTodoCursoUsuarioController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al obtener todas las playlist!!!","errorPlaylist":err.message});
-            return   res.json(err.message);
+            return   res.json(err);
         }
     )
 };
@@ -84,7 +104,7 @@ exports.modificarCursoController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al modificar playlist!!!","errorPlaylist":err.message});
-            return   res.json(err.message);
+            return   res.json(err);
         }
     )
 };
@@ -102,7 +122,7 @@ exports.eliminarCursoController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al eliminar playlist!!!","errorPlaylist":err.message});
-            return res.json(err.message);
+            return res.json(err);
         }
     )
 };
@@ -117,7 +137,7 @@ exports.holaCursoController = async (req, res) => {
         return res.status(200).json({status:200,mensaje:"Hola playlist correctamente"})    
     })
     .catch((error)=>{
-        return res.status(400).json({status:400,mensaje:"Error al obtener hola playlist"})
+        return res.status(400).json({status:400,mensaje:`Error al obtener hola playlist ${error}`})
     })  
 };
 

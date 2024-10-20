@@ -30,7 +30,7 @@ exports.crearRecordatorioController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al generar playlist!!!","errorPlaylist":err.message});
-            return  res.json(err.message);
+            return  res.json(err);
         }
     )
 
@@ -49,7 +49,7 @@ exports.obtenerRecordatorioController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al obtener todas las playlist!!!","errorPlaylist":err.message});
-            return   res.json(err.message);
+            return   res.json(err);
         }
     )
 };
@@ -67,7 +67,7 @@ exports.obtenerTodoRecordatorioUsuarioController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al obtener todas las playlist!!!","errorPlaylist":err.message});
-            return   res.json(err.message);
+            return   res.json(err);
         }
     )
 };
@@ -85,7 +85,7 @@ exports.modificarRecordatorioController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al modificar playlist!!!","errorPlaylist":err.message});
-            return   res.json(err.message);
+            return   res.json(err);
         }
     )
 };
@@ -103,7 +103,7 @@ exports.eliminarRecordatorioController = async (req, res) => {
     .catch(
         (err)=>{
             //return   res.status(400).json({"status":400,"mensaje":"Error,al eliminar playlist!!!","errorPlaylist":err.message});
-            return   res.json(err.message);
+            return   res.json(err);
         }
     )
 };

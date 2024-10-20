@@ -151,6 +151,7 @@ exports.modificarUsuarioService = async function(modificarUsuario){
       }
 }
 
+//Obtener un usuario por su id
 exports.obtenerUsuarioService = async function(obtenerUsuario){
      //por crear conexion 
      let conexion;
@@ -180,8 +181,37 @@ exports.obtenerUsuarioService = async function(obtenerUsuario){
               
      
 }
+// Obtenemos todos los usuarios 
+exports.obtenerTodoUsuarioService = async function(){
+     //por crear conexion 
+     let conexion;
+     try {
+          conexion = await connection();
+     } catch (error) {
+          return {status:503, data:{error:`Error al conectarse a la base de datos ${error}`}};
+     }
+     
+     try {
+         
+          sqlComand = `SELECT u.id_user, u.username, u.password, u.email, u.url_img FROM users;`
+          const [resultAllGetUser] = await conexion.query(sqlComand);
+          
+          if(resultAllGetUser.length === 0){
+               return{status:404, data:{error:"Error, el usuario a obtener no existe"}};
+          }
+          
+          return {status:200,data:resultAllGetUser};
 
+     } catch (error) {
+          return {status:500, data:{error:`Error al obtener usuario ${error}`}};
+     }finally {
+          if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
+      }
+              
+     
+}
 
+// Eliminar un usuario por su id
 exports.eliminarUsuarioService = async function(eliminarUsuario){
      //por implementar
      let conexion;
@@ -376,9 +406,11 @@ exports.loginUsuarioFaceService = async function(loginUsuarioFacial){
      } catch (error) {
           return {status:500, data:{error:`Error al obtener imagenes en el bucket error ${error}`}};
      }
-     
+
+     let conexion ;
      try {
           // Solicitamos el reconocimiento de caras
+          
           for(let usuarioFacial of listaImagenesReconocimientoFacial.Contents){
                
                let tempPath = usuarioFacial.Key.split('/');
@@ -392,8 +424,7 @@ exports.loginUsuarioFaceService = async function(loginUsuarioFacial){
                     let encabezadoPath = 'https://proyecto-semi1-a-g7.s3.amazonaws.com/';
                     if(response.FaceMatches.length !== 0 && response.FaceMatches[0].Similarity > 90){
                          // se crea la conexion con la db si tod esta correcto
-                         let conexion ;
-
+                         
                          try {
                               conexion = await connection();
                          } catch (error) {
@@ -403,7 +434,7 @@ exports.loginUsuarioFaceService = async function(loginUsuarioFacial){
                          let pathImagenUsuario = encabezadoPath + usuarioFacial.Key;
                          console.log(pathImagenUsuario);
                          
-                         sqlComandUsuario = `SELECT u.id_user FROM users u WHERE u.url_img  = "${pathImagenUsuario}"`;
+                         sqlComandUsuario = `SELECT u.id_user FROM users u WHERE u.url_rekognition  = "${pathImagenUsuario}"`;
                          const[resultLogSuccess] = await conexion.query(sqlComandUsuario);
                          return {status:200, data:{id_user:resultLogSuccess[0].id_user}};
                          //return response;
@@ -412,15 +443,14 @@ exports.loginUsuarioFaceService = async function(loginUsuarioFacial){
                
           }
           
-          return {status:404, data:{message:`Este usuario no existe en reconocimiento facial`}};
-          
+          return {status:404, data:{message:`Este usuario no existe en reconocimiento facial`}}; 
  
      } catch (error) {
+          
            return {status:500, data:{error:`Error al comparar cara en recognition:${error}`}};
      }finally {
           if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
-      }
-     
+     }
                          
 }
 
@@ -429,11 +459,9 @@ exports.crearFacialUsuarioService = async function(registrarFacialUsuario){
      //implementar la conexion con el bucker s3 y la db
  
      //variables
-     const {id_user, password} = registrarFacialUsuario.body;
+     const {id_user} = registrarFacialUsuario.body;
       
      let photo_url = `${fotoReconocimientoFacial}${registrarFacialUsuario.file.originalname}`;
-     let nameImage = registrarFacialUsuario.file.originalname;
-     
      
      //implementado s3
      
@@ -460,9 +488,6 @@ exports.crearFacialUsuarioService = async function(registrarFacialUsuario){
                return {status:500, data:{message:"Error, No se puede actualizar imagen de reconocimiento facial"}};
           }
           return {status:201, data:{message:"Reconocimiento facial de usuario creado con exito"}};
-
-                
- 
       } catch (error) {
            
            return {status:400, data:{error:`Error al crear usuario y album,datos en incorrectos. Error Sql:${error}`}};

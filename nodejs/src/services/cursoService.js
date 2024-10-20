@@ -84,6 +84,41 @@ exports.obtenerCursoService = async function(obtenerCurso){
      
 }
 
+//obtiene un Curso a traves de su id
+exports.obtenerTodoCursoService = async function(){
+     //por implementar s3 y db
+     let conexion;
+     
+     try {
+          conexion = await connection();
+     } catch (error) {
+          return {status:503, data:{error:`Error al conectarse a la debe ${error}`}};
+     }
+
+     try {
+          sqlComand = `SELECT c.id_course, c.name, c.credits, c.start_time, c.end_time FROM courses c;`
+          let [resultAllGetCurso] = await conexion.query(sqlComand);
+          
+          if(resultAllGetCurso.length === 0 ){
+               return {status:404, data:{error:"Error,no se puede obtener este curso"}};
+          }
+          
+          for(let i= 0 ; i < resultAllGetCurso.length; i++){
+
+               resultAllGetCurso[i].start_time = getLocalTime(resultAllGetCurso[i].start_time);
+               resultAllGetCurso[i].end_time = getLocalTime(resultAllGetCurso[i].end_time);
+          }
+          
+          return {status:200, data:resultAllGetCurso};
+
+     } catch (error) {
+          return {status:500, data:{error:`Error al obtener Curso ${error}`}};
+     }finally {
+          if (conexion) await conexion.end(); // Cierra la conexión a la base de datos
+     } 
+     
+}
+
 //obtiene todos los  Cursoes de un usuario con su id
 exports.obtenerTodoCursoUsuarioService = async function(obtenerCurso){
      //por implementar  db

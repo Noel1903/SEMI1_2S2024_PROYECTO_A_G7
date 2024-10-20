@@ -55,6 +55,7 @@ function compareFaceImageS3(sourceImage,pathFacial){
   
   //Descomentar por si acaso  ->  let rutaImagenBucket = pathFacial.substring(index + 1); // 'Fotos_Perfil/magodeOzI.jpeg'
   let rutaImagenBucket = pathFacial; //las imagenes del bucket ya estan configuradas por defecto xD
+  //console.log("Aqui en metodo de de compare face",rutaImagenBucket);
   return{
       SourceImage: {
         Bytes: sourceImage.buffer
