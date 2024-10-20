@@ -22,7 +22,7 @@ const {CompareFacesCommand } = require('@aws-sdk/client-rekognition');
 const fotoPerfil = 'https://proyecto-semi1-a-g7.s3.amazonaws.com/imagenes_perfil/';
 
 //fotos reconocimiento facial
-const fotoReconocimientoFacial = 'https://proyecto-semi1-a-g7.s3.amazonaws.com/reconocimiento/';
+const fotoReconocimientoFacial = 'https://proyecto-semi1-a-g7.s3.amazonaws.com/reconocimiento_facial/';
 
 // Implementación de servicios para registrar usuario
 exports.registrarUsuarioService = async function(registrarUsuario){
@@ -401,7 +401,7 @@ exports.loginUsuarioFaceService = async function(loginUsuarioFacial){
      let listaImagenesReconocimientoFacial;
      try {
           // Listar objetos en la carpeta
-         listaImagenesReconocimientoFacial = await s3.send(new ListObjectsV2Command(getAllImageS3("reconocimiento")));
+         listaImagenesReconocimientoFacial = await s3.send(new ListObjectsV2Command(getAllImageS3("reconocimiento_facial")));
          
      } catch (error) {
           return {status:500, data:{error:`Error al obtener imagenes en el bucket error ${error}`}};
@@ -465,7 +465,7 @@ exports.crearFacialUsuarioService = async function(registrarFacialUsuario){
      
      //implementado s3
      
-     const subirImagen = new uploadImage("reconocimiento",registrarFacialUsuario.file);
+     const subirImagen = new uploadImage("reconocimiento_facial",registrarFacialUsuario.file);
      const command = new PutObjectCommand(subirImagen);
      try {
            await s3.send(command);
