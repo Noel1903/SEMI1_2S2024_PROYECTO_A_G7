@@ -38,13 +38,13 @@ const Schedules = () => {
     const getHorarios = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5000/get_schedules_by_user",
+          "http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_schedules_by_user",
           { id_user }
         );
         const horariosConNombre = await Promise.all(
           response.data.map(async (horario) => {
             const { data: curso } = await axios.post(
-              "http://localhost:5000/get_course",
+              "http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_course",
               { id_course: horario.id_course }
             );
             return { ...horario, course_name: curso.name };
@@ -57,7 +57,7 @@ const Schedules = () => {
     };
 
     const getCursos = async () => {
-      const response = await axios.get("http://localhost:5000/get_all_courses");
+      const response = await axios.get("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_all_courses");
       setCursos(response.data);
     };
 
@@ -86,7 +86,7 @@ const Schedules = () => {
     };
 
     if (isEditing) {
-      await axios.put("http://localhost:5000/update_schedule", {
+      await axios.put("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/update_schedule", {
         id_schedule: editId,
         ...data,
       });
@@ -94,9 +94,9 @@ const Schedules = () => {
         prev.map((h) => (h.id_schedule === editId ? { ...h, ...data } : h))
       );
     } else {
-      await axios.post("http://localhost:5000/create_schedule", data);
+      await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/create_schedule", data);
       const { data: curso } = await axios.post(
-        "http://localhost:5000/get_course",
+        "http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_course",
         { id_course: nuevoHorario.id_course }
       );
       setHorarios([
@@ -120,7 +120,7 @@ const Schedules = () => {
   };
 
   const handleEliminar = async (id_schedule) => {
-    await axios.delete("http://localhost:5000/delete_schedule", {
+    await axios.delete("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/delete_schedule", {
       data: { id_schedule },
     });
     alert("Horario eliminado correctamente!");

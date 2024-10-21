@@ -21,7 +21,7 @@ const CreateCourses = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/get_all_courses");
+      const response = await axios.get("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_all_courses");
       setCourses(response.data);
     } catch (error) {
       console.error("Error fetching courses:", error);
@@ -36,7 +36,7 @@ const CreateCourses = () => {
     e.preventDefault();
     try {
       if (editMode) {
-        await axios.put("http://localhost:5000/update_course", {
+        await axios.put("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/update_course", {
             
             name: courseData.name,
             credits: courseData.credits,
@@ -46,7 +46,7 @@ const CreateCourses = () => {
         });
         alert("Curso editado correctamente!");
       } else {
-        await axios.post("http://localhost:5000/create_course", courseData);
+        await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/create_course", courseData);
         alert("Curso creado correctamente!");
       }
       fetchCourses(); // Actualizar lista de cursos
@@ -59,7 +59,7 @@ const CreateCourses = () => {
 
   const handleDelete = async (id_course) => {
     try {
-      await axios.delete("http://localhost:5000/delete_course", {
+      await axios.delete("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/delete_course", {
         data: { id_course },
       });
       alert("Curso eliminado correctamente!");

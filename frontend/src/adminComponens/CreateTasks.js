@@ -27,7 +27,7 @@ const CreateTasks = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/get_tasks");
+      const response = await axios.get("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_tasks");
       setTasks(response.data);
     } catch (error) {
       console.error("Error al obtener tareas:", error);
@@ -36,7 +36,7 @@ const CreateTasks = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/get_all_courses");
+      const response = await axios.get("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_all_courses");
       setCourses(response.data);
     } catch (error) {
       console.error("Error al obtener cursos:", error);
@@ -63,7 +63,7 @@ const CreateTasks = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/create_task", formData);
+      await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/create_task", formData);
       alert("Tarea creada correctamente!");
       setFormData({
         name: "",
@@ -80,7 +80,7 @@ const CreateTasks = () => {
 
   const handleDeleteTask = async (id_task) => {
     try {
-      await axios.delete(`http://localhost:5000/delete_task`, { data: { id_task } });
+      await axios.delete(`http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/delete_task`, { data: { id_task } });
       alert("Tarea eliminada correctamente!");
       fetchTasks();
     } catch (error) {

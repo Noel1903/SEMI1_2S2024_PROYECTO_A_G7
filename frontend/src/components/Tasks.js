@@ -27,7 +27,7 @@ const Tasks = () => {
   // Función para obtener las tareas desde el servidor
   const fetchTareas = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/get_tasks");
+      const response = await axios.get("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_tasks");
       setTareas(response.data); // Asigna la respuesta a la lista de tareas
     } catch (error) {
       console.error("Error al obtener tareas:", error);
@@ -72,7 +72,7 @@ const Tasks = () => {
       formData.append("id_task", id_task); // Agrega el id_task
 
       try {
-        const response = await axios.post("http://localhost:5000/upload_task", formData, {
+        const response = await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/upload_task", formData, {
           headers: {
             "Content-Type": "multipart/form-data", // Importante para subir archivos
           },

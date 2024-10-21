@@ -23,7 +23,7 @@ const VerPerfilAdmin = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/get_user", {
+      const response = await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_user", {
         id_user: localStorage.getItem("id_user"),
       });
       setUser(response.data);
@@ -47,7 +47,7 @@ const VerPerfilAdmin = () => {
     formData.append("image", image);
 
     try {
-      await axios.post("http://localhost:5000/create_rekognition", formData, {
+      await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/create_rekognition", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("Imagen enviada correctamente a Rekognition!");

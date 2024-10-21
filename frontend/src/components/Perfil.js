@@ -12,7 +12,7 @@ const Perfil = () => {
   const getPerfil = async () => {
     const idUsuario = localStorage.getItem("id_user");
     try {
-      const response = await axios.post("http://localhost:5000/get_user", {
+      const response = await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_user", {
         id_user: idUsuario,
       });
       setUsuario(response.data);

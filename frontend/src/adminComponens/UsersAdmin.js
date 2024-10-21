@@ -27,7 +27,7 @@ const UsersAdmin = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/get_users");
+      const response = await axios.get("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_users");
       setUsers(response.data);
     } catch (error) {
       console.error("Error al obtener usuarios:", error);
@@ -60,7 +60,7 @@ const UsersAdmin = () => {
       form.append("role", formData.role);
 
       if (editingUser) {
-        await axios.put(`http://localhost:5000/update_user`,
+        await axios.put(`http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/update_user`,
             {
                 id_user: editingUser.id_user,
                 username: formData.username,
@@ -72,7 +72,7 @@ const UsersAdmin = () => {
         );
         alert("Usuario actualizado correctamente!");
       } else {
-        await axios.post("http://localhost:5000/create_user", form);
+        await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/create_user", form);
         alert("Usuario creado correctamente!");
       }
       resetForm();
@@ -95,7 +95,7 @@ const UsersAdmin = () => {
 
   const handleDeleteUser = async (id_user) => {
     try {
-      await axios.delete(`http://localhost:5000/delete_user`,
+      await axios.delete(`http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/delete_user`,
         { data: { id_user } }
       );
       alert("Usuario eliminado correctamente!");

@@ -20,7 +20,7 @@ const Home = () => {
 
   const fetchCursos = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/get_all_courses");
+      const response = await axios.get("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_all_courses");
       setCursos(response.data);
     } catch (error) {
       console.error("Error al obtener cursos:", error);
@@ -29,7 +29,7 @@ const Home = () => {
 
   const fetchRecordatorios = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/get_reminders_user", { id_user });
+      const response = await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_reminders_user", { id_user });
       setRecordatorios(response.data);
     } catch (error) {
       console.error("Error al obtener recordatorios:", error);

@@ -40,7 +40,7 @@ const Reminders = () => {
   // Obtener recordatorios del usuario
   const fetchRecordatorios = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/get_reminders_user", {
+      const response = await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_reminders_user", {
         id_user,
       });
       setRecordatorios(response.data);
@@ -63,7 +63,7 @@ const Reminders = () => {
   const handleCrearRecordatorio = async () => {
     try {
       if (isEditing) {
-        await axios.put("http://localhost:5000/modify_reminder", {
+        await axios.put("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/modify_reminder", {
           id_reminder: editId,
           name: nuevoRecordatorio.nombre,
           description: nuevoRecordatorio.descripcion,
@@ -72,7 +72,7 @@ const Reminders = () => {
           id_user: id_user,
         });
       } else {
-        await axios.post("http://localhost:5000/create_reminder", {
+        await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/create_reminder", {
           name: nuevoRecordatorio.nombre,
           description: nuevoRecordatorio.descripcion,
           date: nuevoRecordatorio.fecha,
@@ -102,7 +102,7 @@ const Reminders = () => {
 
   const handleEliminar = async (id_reminder) => {
     try {
-      await axios.delete("http://localhost:5000/delete_reminder", {data: {id_reminder} });
+      await axios.delete("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/delete_reminder", {data: {id_reminder} });
       alert("Recordatorio eliminado correctamente.");
       fetchRecordatorios(); // Actualizar la lista
     } catch (error) {

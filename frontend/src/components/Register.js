@@ -39,7 +39,7 @@ const Register = () => {
     if (selectedImage) formData.append("url_img", selectedImage);
 
     try {
-      const response = await axios.post("http://localhost:5000/create_user", formData, {
+      const response = await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/create_user", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -78,7 +78,7 @@ const Register = () => {
         formData.append("role", "user");
         if (selectedImage) formData.append("url_img", selectedImage);
 
-        const resp =await axios.post("http://localhost:5000/create_user", formData, {
+        const resp =await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/create_user", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         console.log(resp);

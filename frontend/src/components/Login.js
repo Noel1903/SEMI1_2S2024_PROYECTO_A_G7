@@ -22,14 +22,22 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:5000/login_user", {
+      const response = await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/login_user", {
         email,
         password,
-      });
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
       if (response.status === 200) {
         localStorage.setItem("id_user", response.data.id_user);
+        console.log(response.data);
         alert("Usuario logueado correctamente");
+
         const role = response.data.role === "admin" ? "admin" : "user";
         localStorage.setItem("role", role);
         navigate(role === "admin" ? "/homeAdmin" : "/home");
@@ -63,7 +71,7 @@ const Login = () => {
     form.append("image", dataURLtoFile(imageData, "face.png"));
 
     try {
-      const response = await axios.post("http://localhost:5000/get_rekognition", form);
+      const response = await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/get_rekognition", form);
 
       if (response.status === 200) {
         const { id_user, message, role } = response.data;
@@ -113,9 +121,9 @@ const Login = () => {
 
       console.log(response.data);
       if (response.data.message ==="Login successful") {
-        const resp = await axios.post("http://localhost:5000/login_user", {
+        const resp = await axios.post("http://balanceado-semi1-502fe059c57d10ca.elb.us-east-1.amazonaws.com/login_user", {
           email,
-          password,
+          password
         });
   
         if (resp.status === 200) {
